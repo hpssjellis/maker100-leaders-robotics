@@ -16,7 +16,7 @@ The entire course is the same as [https://github.com/hpssjellis/maker100-xiaoML-
 
 ## [XIAOML-Kit youtube playlist](https://www.youtube.com/watch?v=EvNXQ0sk5Ec&list=PL57Dnr1H_egtkBZJku20Bo2zaR8KUJGpa&index=1&pp=gAQBiAQB)
 
-## [2026 Price List](https://hpssjellis.github.io/maker100-xiaoML-kit/price-2026-00.html)
+## [2026 Price List](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html)
 
 This course is all about the Seeedstudio $38.90 USD [The-XIAOML-Kit](https://www.seeedstudio.com/The-XIAOML-Kit.html) which has the $22 dollar kit with a $16.90 sdCard + Cables kit.
 
@@ -39,7 +39,7 @@ Views better using the README.md [here](README.md)
 
 This is not an online course; it is expected to be taught by a teacher or professor. Some students might be able to do the course on their own, but many learning opportunities may be missed.
 
-Price list for the equipment I will be using in 2026: [price-2026-00.html](price-2026-00.html) (Many other devices could be used but the videos then will not be accurate for those devices.)
+Price list for the equipment I will be using in 2026: [price-list-2026.html](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html) (Many other devices could be used but the videos then will not be accurate for those devices.)
 
 Note: April 2026 new Technique [webmcu-ai](https://github.com/webmcu-ai) demo page at [https://webmcu-ai.github.io/webmcu-vision-web/index.html](https://webmcu-ai.github.io/webmcu-vision-web/index.html)
 
