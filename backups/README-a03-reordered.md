@@ -5,7 +5,7 @@
 
 ## [XIAOML-Kit youtube playlist](https://www.youtube.com/watch?v=EvNXQ0sk5Ec&list=PL57Dnr1H_egtkBZJku20Bo2zaR8KUJGpa&index=1&pp=gAQBiAQB)
 
-## [2026 Price List](https://hpssjellis.github.io/maker100-xiaoML-kit/price-2026-00.html)
+## [2026 Price List](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html)
 
 This course is all about the Seeedstudio  
 $38.90 USD [The-XIAOML-Kit.html which has the $22 dollar kit with a $16.90  sdCard + Cables kit,  
