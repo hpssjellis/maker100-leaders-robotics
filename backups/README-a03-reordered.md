@@ -159,8 +159,17 @@ Also a cell phone or webCam to video the assignment when it is finished.
 
 
 
+<br><br><br>
+# In-Person Course Basics and Coding using the XiaoEsp32s3-sense or XIAO ML Kit
+I very quickly fly through these assignments as this is not really a programming class, and Arduino IDE setup might 
+be done for you by the IT people.
 
-.
+| Topic | Example Code| Video | Instructions and Prompt|
+|:---|:---|:---|:---|
+|  <a name="a01" href="README.md#a01">`a01-arduino-platformio-setup`</a> Setup both platformIO and the Arduino IDE   |    |  Run a simple blink program   |  Lots of online help how to do this.     |
+|  <a name="a01" href="README.md#a02">`a02-VIDEO-FLAC`</a> VIDEO-FLAC coding examples  | Run all 8 coding exxamples of VIDEO-FLAC   |  V:variables, I:input/output, D: Decisions (if statments), E: events, O:objects (structs), F:functions, L:loops, A:arrays, C:classes.   |  Change the code to make it your own.    |
+
+
 
 
 <br><br><br>
