@@ -77,7 +77,7 @@ Video showing how to setup the XiaoEsp32s3. There are also lots of other instruc
 
 ------------------------------------------------------------------------------------------------------------
 
-## Assignments done in order for of our class of 2026, not the [Maker100 curriculum order](https://github.com/hpssjellis/maker100-curriculum).
+## Assignments done in this expected but not demanded order, not thesame order as the [Maker100 curriculum order](https://github.com/hpssjellis/maker100-curriculum).
 
 # Steps:
 
@@ -101,6 +101,8 @@ Video showing how to setup the XiaoEsp32s3. There are also lots of other instruc
 <br><br><br>
 # In-Person Course overview using the XiaoEsp32s3-sense  
 Students are encouraged to work ahead of the class as we don't expect to have class sets of all the sensors.  
+
+Here we try an easier assignment from each section of the course to see what is expected.
 
 Note: You will need a USB-C cable a computer or laptop to run the code and sometimes a micro SD card.  
 Also a cell phone or webCam to video the assignment when it is finished.
@@ -162,11 +164,12 @@ Also a cell phone or webCam to video the assignment when it is finished.
 
 
 <br><br><br>
-# In-Person Course on Sensors using the XiaoEsp32s3-sense
+# In-Person Course on Sensors using the XiaoEsp32s3-sense or XIAO ML Kit
 Students are encouraged to work ahead of the class.
 
 | Topic | Example Code| Video | Instructions and Prompt|
 |:---|:---|:---|:---|
+|   <a name="a03-base06" href="README.md#a03-base06">`a03-base06-blink-serial-print`</a>  Xiao Esp32s3 LED Blink and Serial Print on both PlatformIO and the Arduino IDE. | [seeed-blink-serial.ino](seeed-sketches/seeed-blink-serial.ino) | ![blink-serial3](https://github.com/user-attachments/assets/eae5ad75-3f34-40c6-8f20-8f4a9b95b8fb) <br> [wokwi Serial](https://wokwi.com/projects/454549337599230977) <br>  <img src="https://img.youtube.com/vi/0OLsLl-CBHQ/hqdefault.jpg" width=100 />    <img src="https://img.youtube.com/vi/3E5KUT115xY/hqdefault.jpg" width=600 />         |  THIS IS THE CODE THAT YOU SHOULD COMPILE ONTO YOUR xiao AFTER DOING EVERY ASSIGNMENT TO CLEAR YOUR WORK!       Print other things and change the pattern of blinking delay times. This is the code you should always leave on the XIAO ML Kit so that you know it works when you first get it.  |
 |  <a name="a15" href="README.md#a15">`a15-voltage-divider`</a> Analog Read (Voltage divider for various 2 prong sensors (variable resistors: flex sensor, photoresistor, touch/pressure sensor))                |  [dot211-any-variable-resistor-sensor.ino](https://github.com/hpssjellis/portenta-pro-community-solutions/blob/main/examples/dot2-portenta-h7-with-accessories/dot21-sensors/dot211-any-variable-resistor-sensor/dot211-any-variable-resistor-sensor.ino)    |       [<img src="https://img.youtube.com/vi/wA6JB-PzuUs/hqdefault.jpg" width=600 />](https://www.youtube.com/watch?v=wA6JB-PzuUs&list=PL57Dnr1H_egt9XmHjfcyRR4YCo3eGrZwQ&index=3&pp=gAQBiAQB)        [<img src="https://img.youtube.com/vi/GR3D8C6dOl8/hqdefault.jpg" width=600 />](https://www.youtube.com/watch?v=GR3D8C6dOl8&list=PL57Dnr1H_egv1FVzAcCZVeANJMs3Hta05&index=3)            |                 Change the Resistor amount and which resistor is attached to 3V3 to get the largest most sensible range of readings.     |
 |   <a name="a16" href="README.md#a16">`a16-two-wire`</a>  Another two wire sensor  |      |     | Figure out how to read the sensor from another variable resistor sensor like a flex sensor, photo-resistor, pressure sensor etc.  |
 |  <a name="a17" href="README.md#a17">`a17-joystick`</a>  Game Controller/JoyStick   |      |     | Figure out how to use the 3 wires (3V3, GND, A0) for one dimension of a joystick  |
@@ -182,7 +185,7 @@ Students are encouraged to work ahead of the class.
 
 
 <br><br><br>
-# In-Person Course on Actuators using the XiaoEsp32s3-sense
+# In-Person Course on Actuators using the XiaoEsp32s3-sense or XIAO ML Kit
 Students are encouraged to work ahead of the class.
 
 | Topic | Example Code| Video | Instructions and Prompt|
@@ -208,8 +211,12 @@ Students are encouraged to work ahead of the class.
 
 
 
+
+
+
+
 <br><br><br>
-## IoT part of the in-person course using the XiaoEsp32s3-sense
+## IoT part of the in-person course using the XiaoEsp32s3-sense or XIAO ML Kit
 Students are encouraged to work ahead of the class.
 
 | Topic | Example Code| Video | Instructions |
@@ -226,7 +233,7 @@ Students are encouraged to work ahead of the class.
 
 
 <br><br><br>
-## Machine Learning part of the in-person course using the XiaoEsp32s3-sense
+## Machine Learning part of the in-person course using the XiaoEsp32s3-sense or XIAO ML Kit
 Students are encouraged to work ahead of the class.   
 Note: These assignments should be done as a break from the regular course throught the course assignments. 
 It is a bit to heavy to do all of these one after another.
@@ -265,9 +272,10 @@ It is a bit to heavy to do all of these one after another.
 
 | Topic | Example Code| Video | Instructions |
 |:---|:---|:---|:---|
-| <a name="FP1" href="README.md#FP1">`FP1`</a>  One sensor with one actuator final project. Needed to be completed to pass the course!  |      |     |   [See Appendix I - Final Project 1](#appendix-i)  |
+|  <a name="a06-sense04" href="README.md#a06-sense04">`a06-Sense04-button`</a>.  Button causes LED to blink, example Final project level 1. Now you can't use this one since it has already been done.          |       [seeed-led-button.ino](seeed-sketches/seeed-led-button.ino) | This is actually an example of an absolute basic final project since it has a sensor (The Button), the micrcontroller (XIAO esp32S3) and an actuator (The LED). This is your first [maker100-curriculum sensor](https://github.com/hpssjellis/maker100-curriculum#sensors) assignment  <img src="https://img.youtube.com/vi/SkTqOthK3JM/hqdefault.jpg" width=600 />     <img src="https://img.youtube.com/vi/wFw-AF8gwiY/hqdefault.jpg" width=600 />           |                   <img src="media/b-b-h-button-control-led.jpg" width = 200/>  <br>        Control the LED with the button, then control multiple LED's with Multiple Buttons. Note: Can't control large current flow devices, WHY? Could you make the external LED interact like the internal LED?  Did you realise that this is actaully a sensor and actuator assignment?  |
+| <a name="FP1" href="README.md#FP1">`FP1`</a>  One sensor with one actuator final project. Needed to be completed to pass the course! Must be a unique sensor actuator combination witin your class  |      |     |   [See Appendix I - Final Project 1](#appendix-i)  |
 | <a name="FP2" href="README.md#FP2">`FP2`</a>  complex sensor, ML, complex actuator and or IoT communication final project. This project needs to be completed to get an "A" in the course  |      |     |   [See Appendix J - Final Project 2](#appendix-j)  |
-| <a name="FP3" href="README.md#FP3">`FP3`</a>  group final project, proof of concept for a viable product or something fun and creative. Each person in the group brings a skill. Groups often organized by the teacher based on who has time and abilities. Group project is not needed, but typically brings a final grade up a few percentage points.   |      |     |   [See Appendix K - Final Project 3](#appendix-k)  |
+| <a name="FP3" href="README.md#FP3">`FP3`</a>  group final project, proof of concept for a viable product or something fun and creative. Each person in the group brings a skill. Groups often organized by the teacher based on who has time and abilities. Group project is not needed, but typically brings a final grade up a few extra percentage points for each person in the group.   |      |     |   [See Appendix K - Final Project 3](#appendix-k)  |
 
 
 
