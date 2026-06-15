@@ -45,7 +45,7 @@ Note: Student Ryan H found the [Arduino Droid](https://play.google.com/store/app
 
 ---
 
-**Why Maker100-xiaoML-kit?** [See Appendix C](#appendix-c-why-maker100-xiaoml-kit)
+**Why Maker100-leaders-robotics?** [See Appendix C](#appendix-c-why-maker100-xiaoml-kit)
 
 ---
 
@@ -375,9 +375,10 @@ If you choose to use the expansion board this ebook [here](https://mjrovai.githu
 
 ---
 
-## Appendix C: Why Maker100-xiaoML-kit?
+## Appendix C: Why Maker100-leaders-robotics?
 
-The arduino PortentaH7 with LoRa Vision Shield is an incredible TinyML device that can do amazing things and has been a joy to teach, but I am part of an international group trying to bring tinyML to the students in developing countries called [tinyML4D](https://tinyml.seas.harvard.edu/team) and the Arduino PortentaH7 is just too expensive for student explorations. Also when you fry one of these boards it is very upsetting.
+With the success of the makers100-xiao-ml-kit it is time to allow other schools to attempt this course with or without
+a small amount of assistance. 2026-2027 is the testing year to see if pilot projects can get founding and attempt this course is multiple countries to get back to Ai-For-Good in 2027 and make a decision about scaling this course to many schools. You can be a part of this process!
 
 ---
 
