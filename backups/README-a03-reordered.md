@@ -45,7 +45,7 @@ Note: Student Ryan H found the [Arduino Droid](https://play.google.com/store/app
 
 ---
 
-**Why Maker100-leaders-robotics?** [See Appendix C](#appendix-c-why-maker100-xiaoml-kit)
+**Why Maker100-leaders-robotics?** [See Appendix C](#appendix-c-why-maker100-leaders-robotics)
 
 ---
 
