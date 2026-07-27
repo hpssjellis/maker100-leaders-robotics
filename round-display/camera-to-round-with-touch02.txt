@@ -1,0 +1,172 @@
+#include <Arduino.h>
+#include <TFT_eSPI.h>
+#include <SPI.h>
+#include <Wire.h>
+#include "esp_camera.h"
+
+// ---- Screen Setup ----
+#define myScreenWidth  240
+#define myScreenHeight 240
+#define myTouchInt     D7
+#define myTouchI2C     0x2e
+
+TFT_eSPI    myTft  = TFT_eSPI();
+TFT_eSprite myFace = TFT_eSprite(&myTft);
+
+// ---- Global State ----
+int32_t myTouchX = 0, myTouchY = 0;
+bool myIsTouching = false;
+
+// ---- Camera Pins (XIAO ESP32S3 Sense) ----
+#define myPwdn  -1
+#define myReset -1
+#define myXclk  10
+#define mySiod  40
+#define mySioc  39
+#define myY9    48
+#define myY8    11
+#define myY7    12
+#define myY6    14
+#define myY5    16
+#define myY4    18
+#define myY3    17
+#define myY2    15
+#define myVsync 38
+#define myHref  47
+#define myPclk  13
+
+// ---- Camera Init ----
+void myInitCamera() {
+  camera_config_t myConfig;
+
+  myConfig.ledc_channel = LEDC_CHANNEL_0;
+  myConfig.ledc_timer   = LEDC_TIMER_0;
+
+  myConfig.pin_d0 = myY2;
+  myConfig.pin_d1 = myY3;
+  myConfig.pin_d2 = myY4;
+  myConfig.pin_d3 = myY5;
+  myConfig.pin_d4 = myY6;
+  myConfig.pin_d5 = myY7;
+  myConfig.pin_d6 = myY8;
+  myConfig.pin_d7 = myY9;
+
+  myConfig.pin_xclk = myXclk;
+  myConfig.pin_pclk = myPclk;
+  myConfig.pin_vsync = myVsync;
+  myConfig.pin_href = myHref;
+  myConfig.pin_sscb_sda = mySiod;
+  myConfig.pin_sscb_scl = mySioc;
+  myConfig.pin_pwdn = myPwdn;
+  myConfig.pin_reset = myReset;
+
+  myConfig.xclk_freq_hz = 20000000;
+  myConfig.pixel_format = PIXFORMAT_RGB565;
+
+  myConfig.frame_size = FRAMESIZE_240X240;
+  myConfig.fb_count   = 2;
+  myConfig.grab_mode  = CAMERA_GRAB_WHEN_EMPTY;
+
+  if (esp_camera_init(&myConfig) != ESP_OK) {
+    Serial.println("Camera init failed");
+    return;
+  }
+
+  sensor_t * mySensor = esp_camera_sensor_get();
+
+  if (mySensor) {
+    // ---- Orientation (start clean) ----
+   // mySensor->set_hmirror(mySensor, 1);  // selfie-style
+    mySensor->set_hmirror(mySensor, 0);  // Camera view style
+    mySensor->set_vflip(mySensor, 1);    // change to 1 if upside down
+
+    // ---- Image tuning ----
+    mySensor->set_brightness(mySensor, 1);
+    mySensor->set_contrast(mySensor, 1);
+    mySensor->set_saturation(mySensor, 1);
+
+    mySensor->set_whitebal(mySensor, 1);
+    mySensor->set_awb_gain(mySensor, 1);
+    mySensor->set_wb_mode(mySensor, 0);
+  }
+}
+
+// ---- Touch ----
+bool myCheckTouch() {
+  if (digitalRead(myTouchInt) != LOW) return false;
+
+  Wire.beginTransmission(myTouchI2C);
+  if (Wire.endTransmission() != 0) return false;
+
+  uint8_t myBuf[5];
+  Wire.requestFrom(myTouchI2C, 5);
+
+  for (int i = 0; i < 5; i++) {
+    myBuf[i] = Wire.read();
+  }
+
+  if (myBuf[0] == 0x01) {
+    int myRawX = myBuf[2];
+    int myRawY = myBuf[4];
+
+    myTouchX = myScreenWidth  - myRawY;
+   // myTouchX = myRawY;
+   // myTouchY = myScreenHeight - myRawX;
+    myTouchY = myRawX;
+    return true;
+  }
+
+  return false;
+}
+
+// ---- Setup ----
+void setup() {
+  Serial.begin(115200);
+
+  myTft.init();
+
+  // ---- IMPORTANT FIXES ----
+  myTft.setRotation(3);     // 1 works  try 0–3 if needed
+  myTft.setSwapBytes(true); // ✅ fixes RGB issues cleanly
+
+  myFace.setColorDepth(16);
+  myFace.createSprite(myScreenWidth, myScreenHeight);
+ // myFace.setRotation(0);
+  myFace.setTextColor(TFT_WHITE, TFT_BLACK);
+  myFace.setTextSize(1);
+  myFace.pushRotated(180);
+
+  pinMode(myTouchInt, INPUT_PULLUP);
+  Wire.begin();
+
+  myInitCamera();
+}
+
+// ---- Main Loop ----
+void loop() {
+
+  myIsTouching = myCheckTouch();
+
+  camera_fb_t *myFrame = esp_camera_fb_get();
+
+  if (!myFrame) return;
+
+  // ---- Direct copy (NO manual byte swapping) ----
+  memcpy(myFace.getPointer(), myFrame->buf, myFrame->len);
+
+  esp_camera_fb_return(myFrame);
+
+  // ---- Draw overlay ----
+  if (myIsTouching) {
+    myFace.drawCircle(myTouchX, myTouchY, 20, TFT_WHITE);
+    myFace.fillCircle(myTouchX, myTouchY, 3, TFT_CYAN);
+  }
+
+
+  
+  myFace.setCursor(80, 120);
+  myFace.print("Hello World");
+
+  // ---- Push to display ----
+  myFace.pushSprite(0, 0);
+}
