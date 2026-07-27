@@ -1,0 +1,132 @@
+#include <LSM6DS3.h>
+#include <Wire.h>
+#include "FS.h"
+#include "SD.h"
+#include "SPI.h"
+#include <U8g2lib.h>
+
+// Initialize the 72x40 OLED using the Page Buffer mode (saves RAM)
+U8G2_SSD1306_72X40_ER_1_HW_I2C myDisplay(U8G2_R2, U8X8_PIN_NONE);
+
+LSM6DS3 myIMU(I2C_MODE, 0x6A);
+
+const int myTriggerPin = A0; 
+const int myThreshold = 1200;
+int mySessionID = 0;
+int myFileCounter = 1;
+char myFullFilename[32] = "Ready";
+char myShortFilename[32] = "Ready";
+int myRecordMS = 2000;  
+
+// Timer for display updates (non-blocking)
+unsigned long myPrevMillis = 0;
+const long myDisplayInterval = 100; // 10Hz update
+
+// Global variables for live display
+float myCurrentX, myCurrentY, myCurrentZ;
+
+void myUpdateDisplay() {
+  myDisplay.firstPage();
+  do {
+    // Header Font
+    myDisplay.setFont(u8g2_font_5x7_tf);
+    myDisplay.setCursor(0, 7);
+    myDisplay.print("File:");
+    myDisplay.print(myShortFilename);
+
+    // Motion Data - using smaller spacing for the 40px height
+    myDisplay.setCursor(0, 18);
+    myDisplay.print(myCurrentX, 2);
+    myDisplay.setCursor(0, 28);
+    myDisplay.print(myCurrentY, 2); 
+    myDisplay.setCursor(0, 38);
+    myDisplay.print(myCurrentZ, 2);
+  } while (myDisplay.nextPage());
+}
+
+void setup() {
+  Serial.begin(115200);
+  if (!Serial) { delay(2000); } // Brief pause for Serial
+  
+  pinMode(myTriggerPin, PULLDOWN);
+  myDisplay.begin();
+  
+  if (myIMU.begin() != 0) {
+    Serial.println("IMU fail");
+    while (1);
+  }
+
+  if (!SD.begin(21)) {
+    Serial.println("SD fail");
+    while (1);
+  }
+
+  randomSeed(analogRead(A0));
+  mySessionID = random(1000, 10000);
+  Serial.println("System Ready. Session: " + String(mySessionID));
+}
+
+void myRecordBurst() {
+  // Generate names using current counter
+  sprintf(myFullFilename, "/%d_%d.csv", mySessionID, myFileCounter);
+  sprintf(myShortFilename, "%d_%d", mySessionID, myFileCounter);
+  
+  Serial.print(" Recording: ");
+  Serial.print(myFullFilename);
+  
+  File myFile = SD.open(myFullFilename, FILE_WRITE);
+  if (!myFile) {
+    Serial.println("File error");
+    return;
+  }
+
+  myFile.println("timestamp,accX,accY,accZ");
+  
+  unsigned long myStartTime = millis();
+  while (millis() - myStartTime < myRecordMS) {
+    myCurrentX = myIMU.readFloatAccelX() * 9.8;
+    myCurrentY = myIMU.readFloatAccelY() * 9.8;
+    myCurrentZ = myIMU.readFloatAccelZ() * 9.8;
+
+    myFile.print(millis() - myStartTime);
+    myFile.print(",");
+    myFile.print(myCurrentX, 4); myFile.print(",");
+    myFile.print(myCurrentY, 4); myFile.print(",");
+    myFile.println(myCurrentZ, 4); 
+    
+    // Tiny delay to maintain sample rate
+    delay(10); 
+  }
+
+  myFile.close();
+  myFileCounter++; // Increment for next file
+  myUpdateDisplay(); 
+  delay(500); // Short cooldown
+}
+
+void loop() {
+  int myAnalogVal = analogRead(myTriggerPin);
+  unsigned long myCurrentMillis = millis();
+
+  // Read sensor data continuously
+  myCurrentX = myIMU.readFloatAccelX() * 9.8;;
+  myCurrentY = myIMU.readFloatAccelY() * 9.8;;
+  myCurrentZ = myIMU.readFloatAccelZ() * 9.8;;
+
+  // Update display based on interval
+  if (myCurrentMillis - myPrevMillis >= myDisplayInterval) {
+    myPrevMillis = myCurrentMillis;
+    myUpdateDisplay();
+  }
+
+  // Trigger recording
+  if (myAnalogVal > myThreshold) {
+    Serial.print("Start recording for ");
+    Serial.print(myRecordMS);
+
+
+    
+    myRecordBurst();
+    Serial.println(", CSV File Saved.");
+  }
+}

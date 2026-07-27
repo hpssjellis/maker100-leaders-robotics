@@ -1,0 +1,302 @@
+// gps-v03.ino
+// Grove GPS AIR530 with XIAO ESP32-S3
+// Parses NMEA sentences and extracts latitude, longitude, and local PT time
+// No external libraries required
+//
+// Wiring:
+//   XIAO GPIO43 (TX D6) --> Grove GPS RX
+//   XIAO GPIO44 (RX D7) --> Grove GPS TX
+//              XIAO 3V3 --> Grove GPS VCC
+//              XIAO GND --> Grove GPS GND
+
+#include <Arduino.h>
+
+#define GPS_BAUD     9600
+#define GPS_RX_PIN   44       // actually pin D7 on the XIAO ESP32-S3 default Serial1 RX
+#define GPS_TX_PIN   43       // actually pin D6 on the XIAO ESP32-S3 default Serial1 TX
+#define NMEA_MAX_LEN 100      // NMEA sentences are max 82 chars + some margin
+
+
+// ─── Globals ────────────────────────────────────────────────────────────────
+
+char    nmeaBuffer[NMEA_MAX_LEN];
+uint8_t nmeaIndex = 0;
+
+// Acquisition timing
+unsigned long gpsStartMs     = 0;     // millis() at boot
+bool          gpsFixReported = false; // have we printed the first-fix banner?
+
+// Last valid fix
+bool    gpsHasFix       = false;
+float   gpsLat          = 0.0;
+float   gpsLon          = 0.0;
+char    gpsLatDir       = 'N';
+char    gpsLonDir       = 'E';
+char    gpsTimeUTC[12]  = "--------";  // hhmmss.ss from RMC field 1
+char    gpsDateUTC[8]   = "------";    // DDMMYY    from RMC field 9
+
+
+// ─── NMEA Helpers ────────────────────────────────────────────────────────────
+
+// Extract the Nth comma-separated field from an NMEA sentence into 'out'.
+// Returns true if the field exists and is non-empty.
+bool nmeaField(const char* sentence, int fieldNum, char* out, int outLen) {
+    int field = 0;
+    int i     = 0;
+    int j     = 0;
+    while (sentence[i] != '\0') {
+        if (sentence[i] == ',') {
+            if (field == fieldNum) {
+                out[j] = '\0';
+                return (j > 0);
+            }
+            field++;
+            j = 0;
+        } else if (field == fieldNum) {
+            if (j < outLen - 1) out[j++] = sentence[i];
+        }
+        i++;
+    }
+    // Handle last field (ends at * or end of string)
+    if (field == fieldNum && j > 0) {
+        out[j] = '\0';
+        return true;
+    }
+    return false;
+}
+
+
+// Convert NMEA lat/lon format (DDDMM.MMMM) to decimal degrees.
+// NMEA packs degrees and minutes together: first 2 (lat) or 3 (lon) digits
+// are degrees, the rest are minutes.
+float nmeaToDegrees(const char* raw, bool isLon) {
+    float raw_f   = atof(raw);
+    int   degInt  = (int)(raw_f / 100);         // integer degrees
+    float minutes = raw_f - (degInt * 100.0f);  // remaining minutes
+    return degInt + (minutes / 60.0f);
+}
+
+
+// Validate NMEA checksum. Sentence should NOT include leading '$'.
+// Checksum is XOR of all bytes between $ and *.
+bool nmeaChecksumValid(const char* sentence) {
+    const char* p   = sentence;
+    uint8_t     crc = 0;
+    while (*p && *p != '*') crc ^= (uint8_t)(*p++);
+    if (*p != '*') return false;
+    uint8_t expected = (uint8_t)strtol(p + 1, nullptr, 16);
+    return (crc == expected);
+}
+
+
+// ─── Pacific Time Conversion ─────────────────────────────────────────────────
+//
+// Canada is abolishing DST, so PT is a fixed UTC-8 year-round.
+// Only edge case to handle: UTC hours 00:00–07:59 roll back into the
+// previous calendar day.
+
+// Pacific Time UTC offset.
+//
+// Canada has voted to abolish DST but the legislation is not yet in force
+// as of early 2026, so clocks still shift in the meantime:
+//
+//   PDT (summer): UTC-7   → 2nd Sunday March  to 1st Sunday November
+//   PST (winter): UTC-8   → 1st Sunday November to 2nd Sunday March
+//
+// Change this one number when the rules change, or when you move time zones.
+// Mountain = -7/-6,  Central = -6/-5,  Eastern = -5/-4
+//
+#define PT_OFFSET_HOURS  -7     // PDT (summer, UTC-7) — change to -8 in November
+
+// Returns true if year (20xx) is a leap year
+bool isLeapYear(int y) {
+    return (y % 4 == 0 && (y % 100 != 0 || y % 400 == 0));
+}
+
+// Days in each month (index 1–12)
+int daysInMonth(int m, int y) {
+    const int days[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+    if (m == 2 && isLeapYear(y)) return 29;
+    return days[m];
+}
+
+// Build a formatted PT datetime string into 'out' (must be ≥ 32 bytes).
+// Reads from gpsTimeUTC ("hhmmss.ss") and gpsDateUTC ("DDMMYY").
+// Example output: "2026-04-28  06:31:56 PT"
+void formatPacificTime(char* out, int outLen) {
+    if (strlen(gpsTimeUTC) < 6 || strlen(gpsDateUTC) < 6) {
+        strncpy(out, "No date/time yet", outLen);
+        return;
+    }
+
+    // Parse UTC time
+    int hh = (gpsTimeUTC[0]-'0')*10 + (gpsTimeUTC[1]-'0');
+    int mm = (gpsTimeUTC[2]-'0')*10 + (gpsTimeUTC[3]-'0');
+    int ss = (gpsTimeUTC[4]-'0')*10 + (gpsTimeUTC[5]-'0');
+
+    // Parse UTC date (DDMMYY → day, month, full year)
+    int day   = (gpsDateUTC[0]-'0')*10 + (gpsDateUTC[1]-'0');
+    int month = (gpsDateUTC[2]-'0')*10 + (gpsDateUTC[3]-'0');
+    int year  = 2000 + (gpsDateUTC[4]-'0')*10 + (gpsDateUTC[5]-'0');
+
+    // Apply fixed -8h offset; roll back date if hour goes negative
+    hh += PT_OFFSET_HOURS;
+    if (hh < 0) {
+        hh += 24;
+        day--;
+        if (day < 1) {
+            month--;
+            if (month < 1) { month = 12; year--; }
+            day = daysInMonth(month, year);
+        }
+    }
+
+    snprintf(out, outLen, "%04d-%02d-%02d  %02d:%02d:%02d PT",
+             year, month, day, hh, mm, ss);
+}
+
+
+// ─── Sentence Parser ─────────────────────────────────────────────────────────
+
+// Parses $GPRMC or $GNRMC sentences (Recommended Minimum Navigation Info).
+// These always contain: time, status, lat, lat-dir, lon, lon-dir
+// Field layout:
+//   0=talker+sentence  1=time  2=status  3=lat  4=N/S  5=lon  6=E/W  ...
+void parseRMC(const char* sentence) {
+    char field[20];
+
+    // Field 2: status  A=active (fix)  V=void (no fix)
+    if (!nmeaField(sentence, 2, field, sizeof(field))) return;
+    if (field[0] != 'A') {
+        gpsHasFix = false;
+        return;
+    }
+
+    // Field 1: UTC time hhmmss.ss
+    if (nmeaField(sentence, 1, field, sizeof(field)))
+        strncpy(gpsTimeUTC, field, sizeof(gpsTimeUTC));
+
+    // Field 9: UTC date DDMMYY
+    if (nmeaField(sentence, 9, field, sizeof(field)))
+        strncpy(gpsDateUTC, field, sizeof(gpsDateUTC));
+
+    // Field 3: latitude raw   Field 4: N/S
+    char latRaw[16], lonRaw[16];
+    if (!nmeaField(sentence, 3, latRaw, sizeof(latRaw))) return;
+    if (!nmeaField(sentence, 4, field,  sizeof(field)))  return;
+    gpsLatDir = field[0];
+
+    // Field 5: longitude raw  Field 6: E/W
+    if (!nmeaField(sentence, 5, lonRaw, sizeof(lonRaw))) return;
+    if (!nmeaField(sentence, 6, field,  sizeof(field)))  return;
+    gpsLonDir = field[0];
+
+    gpsLat    = nmeaToDegrees(latRaw, false);
+    gpsLon    = nmeaToDegrees(lonRaw, true);
+
+    // Apply hemisphere sign
+    if (gpsLatDir == 'S') gpsLat = -gpsLat;
+    if (gpsLonDir == 'W') gpsLon = -gpsLon;
+
+    gpsHasFix = true;
+}
+
+
+// Dispatch a complete NMEA sentence to the right parser.
+// Add more sentence types here later (GGA for altitude, GSA for accuracy, etc.)
+void processNMEA(const char* sentence) {
+    // Skip the leading '$', validate checksum
+    const char* body = sentence + 1;
+    if (!nmeaChecksumValid(body)) {
+        Serial.println("[GPS] Checksum fail, skipping sentence");
+        return;
+    }
+
+    // Match sentence type (works for GP, GN, GL talker prefixes)
+    if (strstr(sentence, "RMC")) parseRMC(body);
+    // else if (strstr(sentence, "GGA")) parseGGA(body);  // future expansion
+}
+
+
+// ─── Setup & Loop ────────────────────────────────────────────────────────────
+
+void setup() {
+    Serial.begin(115200);
+    delay(1500);
+    Serial.println("GPS XIAO ESP32-S3 — v03");
+    Serial.println("Waiting for GPS sentences...\n");
+
+    gpsStartMs = millis();
+    Serial1.begin(GPS_BAUD, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
+}
+
+
+void loop() {
+    // ── Read GPS bytes and accumulate into line buffer ──
+    while (Serial1.available()) {
+        char c = Serial1.read();
+
+        if (c == '$') {
+            // Start of a new sentence — reset buffer
+            nmeaIndex = 0;
+            nmeaBuffer[nmeaIndex++] = c;
+
+        } else if (c == '\n' || c == '\r') {
+            // End of sentence — process it if we captured something
+            if (nmeaIndex > 5) {
+                nmeaBuffer[nmeaIndex] = '\0';
+                processNMEA(nmeaBuffer);
+            }
+            nmeaIndex = 0;
+
+        } else {
+            // Mid-sentence character
+            if (nmeaIndex < NMEA_MAX_LEN - 1) {
+                nmeaBuffer[nmeaIndex++] = c;
+            } else {
+                // Overflow — discard and wait for next sentence
+                nmeaIndex = 0;
+            }
+        }
+    }
+
+    // ── First-fix banner (prints once the moment we get a valid fix) ──
+    if (gpsHasFix && !gpsFixReported) {
+        gpsFixReported = true;
+        unsigned long elapsed = millis() - gpsStartMs;
+        unsigned int  secs    = elapsed / 1000;
+        unsigned int  tenths  = (elapsed % 1000) / 100;
+        Serial.println();
+        Serial.println("╔══════════════════════════════╗");
+        Serial.println("║       GPS FIX ACQUIRED!      ║");
+        Serial.print  ("║  Time to fix: ");
+        Serial.print  (secs); Serial.print("."); Serial.print(tenths);
+        Serial.println(" sec          ║");
+        Serial.println("╚══════════════════════════════╝");
+        Serial.println();
+    }
+
+    // ── Print fix status every 2 seconds ──
+    static unsigned long lastPrint = 0;
+    if (millis() - lastPrint >= 2000) {
+        lastPrint = millis();
+
+        if (gpsHasFix) {
+            char ptTime[32];
+            formatPacificTime(ptTime, sizeof(ptTime));
+            Serial.print("PT:  ");
+            Serial.println(ptTime);
+            Serial.print("Lat: ");
+            Serial.println(gpsLat, 6);
+            Serial.print("Lon: ");
+            Serial.println(gpsLon, 6);
+            Serial.println("---");
+        } else {
+            // Print elapsed seconds and a dot so students know it's alive
+            unsigned long elapsed = (millis() - gpsStartMs) / 1000;
+            Serial.print("Searching for satellites... ");
+            Serial.print(elapsed);
+            Serial.println("s  (warm start ~5s, cold start up to 90s)");
+        }
+    }
+}
