@@ -101,12 +101,6 @@ No grade — do this first to confirm your board is working. Flashes a binary to
 | Tool | Link | Notes |
 | :--- | :--- | :--- |
 | Web flash + live test | [xiaoml-kit-esp32-web-tool](https://hpssjellis.github.io/xiaoml-kit-esp32-web-tool/public/index.html) | Can also view and change the SD card. Use this to verify camera, mic, IMU, OLED and SD card are all working. |
-| WebSerial Variable Tracer | [webserial-variable-trace](https://hpssjellis.github.io/xiaoml-kit-webserial-variable-trace/webtracer.html) — GitHub: [xiaoml-kit-webserial-variable-trace](https://github.com/hpssjellis/xiaoml-kit-webserial-variable-trace) | Fancy data plotter; can peek and set memory items. Careful setting memory — you could brick your MCU. |
-
----
-
-| Topic | Example Code | Video | Instructions and Prompt |
-| :--- | :--- | :--- | :--- |
 | <a name="a01-on-device-ml" href="README.md#a01-on-device-ml">`a01-on-device-ml`</a> PlatformIO and Arduino IDE on-device-ML with u8g2 OLED include library | Hard first day: [esp-all-menu-A0-image-train-infer.txt](https://github.com/hpssjellis/my-examples-of-tensorflowjs-for-tinytorch/blob/main/esp-on-device-train-one-program/esp-all-menu-A0-image-train-infer.txt), or try the easier first day which is the same as a03-blink-serial but on both PlatformIO and the Arduino IDE: [seeed-blink-serial.ino](seeed-sketches/seeed-blink-serial.ino) | This assignment covers the [Maker100-Curriculum Basics](https://github.com/hpssjellis/maker100-curriculum#basics) Base01–Base05, Base07 Assignments | See [Tutorial ml16](#tutorial-ml16) |
 | <a name="a02-sensecraft" href="README.md#a02-sensecraft">`a02-sensecraft`</a> Follow the SenseCraft Vision example | [wiki.seeedstudio.com/sscma/](https://wiki.seeedstudio.com/sscma/) — direct webpage: [sensecraft.seeed.cc](https://sensecraft.seeed.cc/ai/#/home) | This assignment covers the start of the [Maker100-curriculum Machine Learning](https://github.com/hpssjellis/maker100-curriculum#machine-learning) | |
 | <a name="a03-blink-serial" href="README.md#a03-blink-serial">`a03-blink-serial`</a> XIAO ESP32S3 LED Blink and Serial Print on both PlatformIO and the Arduino IDE | [seeed-blink-serial.ino](seeed-sketches/seeed-blink-serial.ino) | ![blink-serial3](https://github.com/user-attachments/assets/eae5ad75-3f34-40c6-8f20-8f4a9b95b8fb) [wokwi Serial](https://wokwi.com/projects/454549337599230977) <img src="https://img.youtube.com/vi/0OLsLl-CBHQ/hqdefault.jpg" width=100 /> <img src="https://img.youtube.com/vi/3E5KUT115xY/hqdefault.jpg" width=300 /> | THIS IS THE CODE YOU SHOULD COMPILE ONTO YOUR XIAO AFTER DOING EVERY ASSIGNMENT TO CLEAR YOUR WORK! Print other things and change the pattern of blinking delay times. Always leave this on the XIAO ML Kit so you know it works. |
@@ -312,6 +306,13 @@ Student must complete an individual final project to pass the in-person course; 
 <br><br>
 
 # Tutorials If Needed
+
+# Advanced
+
+| Tool | Link | Notes |
+| :--- | :--- | :--- |
+| WebSerial Variable Tracer | [webserial-variable-trace](https://hpssjellis.github.io/xiaoml-kit-webserial-variable-trace/webtracer.html) — GitHub: [xiaoml-kit-webserial-variable-trace](https://github.com/hpssjellis/xiaoml-kit-webserial-variable-trace) | Fancy data plotter; can peek and set memory items. Careful setting memory — you could brick your MCU. |
+
 
 ## Tutorial ml16
 
