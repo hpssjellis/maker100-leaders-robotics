@@ -101,7 +101,6 @@ No grade — do this first to confirm your board is working. Flashes a binary to
 | Tool | Link | Notes |
 | :--- | :--- | :--- |
 | Web flash + live test | [xiaoml-kit-esp32-web-tool](https://hpssjellis.github.io/xiaoml-kit-esp32-web-tool/public/index.html) | Can also view and change the SD card. Use this to verify camera, mic, IMU, OLED and SD card are all working. |
-| WebSerial Variable Tracer | [webserial-variable-trace](https://hpssjellis.github.io/xiaoml-kit-webserial-variable-trace/webtracer.html) — GitHub: [xiaoml-kit-webserial-variable-trace](https://github.com/hpssjellis/xiaoml-kit-webserial-variable-trace) | Fancy data plotter; can peek and set memory items. Careful setting memory — you could brick your MCU. |
 
 ---
 
@@ -332,6 +331,13 @@ Code to load on PlatformIO and the Arduino IDE: [esp-all-menu-A0-image-train-inf
 ---
 
 <br><br>
+
+# Advanced Links that some students may find useful
+
+| Topic | Example Code | Video | Instructions and Prompt |
+| :--- | :--- | :--- | :--- |
+| WebSerial Variable Tracer | [webserial-variable-trace](https://hpssjellis.github.io/xiaoml-kit-webserial-variable-trace/webtracer.html) — GitHub: [xiaoml-kit-webserial-variable-trace](https://github.com/hpssjellis/xiaoml-kit-webserial-variable-trace) | Fancy data plotter; can peek and set memory items. Careful setting memory — you could brick your MCU. |
+
 
 # Appendices
 
