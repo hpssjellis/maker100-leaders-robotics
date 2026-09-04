@@ -1,58 +1,539 @@
 
-# Bring Maker100 Leaders Robotics to Your High School — A PAC Pilot Proposal
+# Bring Maker100 Leaders Robotics to Your High School
+## A $2,000 PAC Pilot Proposal
 
-## What This Is
-A proposal for a Parent Advisory Committee (PAC) to fund a small pilot of **Maker100 Leaders Robotics**, a meta-course that can be embedded inside *any* existing computer lab course — robotics, electronics, or even web design — to test whether the school community wants it before committing to a full standalone course.
+## The Idea
 
-**Curriculum:** [maker100-leaders-robotics](https://github.com/hpssjellis/maker100-leaders-robotics/tree/main)
-**Underlying course materials:** [maker100-curriculum](https://github.com/hpssjellis/maker100-curriculum)
-**2026 Price List:** [price-list-2026.html](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html) *(set student count to 7 when pricing this pilot)*
+Give a small group of motivated high school students the opportunity to explore **robotics, electronics, programming, AI, physics, and engineering** through a hands-on project-based course — without requiring the school to create a new standalone course.
 
-## The Pitch to Your PAC
-Fund a **7-student pilot** — roughly **$2,000 USD** — inside an existing computer lab course. Those 7 students don't need to already be "robotics kids." They need to be **driven and math/physics-capable**, willing to work through hands-on problem solving. For example, 7 motivated students inside a web design course could run this pilot alongside their regular coursework.
+**Maker100 Leaders Robotics** can be embedded within an existing computer lab, robotics, electronics, programming, or web-design course.
 
-If it succeeds, the school has real, local evidence — not a sales pitch — for whether to build a full course around it.
+The proposed PAC pilot is intentionally small:
 
-## Why It's a Meta-Course
-Maker100 isn't a robotics course bolted onto a curriculum. It's a hands-on vehicle for concepts across:
-- Math
+- **7 students**
+- Approximately **$2,000 USD** in startup funding
+- Hosted inside an existing course
+- No robotics-specialist teacher required
+- Students use **LLMs such as ChatGPT as learning and problem-solving assistants**
+- Students learn by building, testing, explaining, and teaching
+- The pilot produces evidence that can help the school decide whether a larger program is worthwhile
+
+This is a **pilot, not a commitment to create a new course**.
+
+---
+
+## The PAC Ask
+
+We are asking the PAC to fund approximately **$2,000 USD** for a 7-student pilot.
+
+The school would provide:
+
+1. An existing computer lab or suitable classroom
+2. A capable teacher to supervise the students
+3. Normal school computer access
+4. District/school IT support for installing required software
+5. Approximately 7 motivated students
+
+The PAC provides the hardware and startup resources needed for the pilot.
+
+After the pilot, the school can decide — based on actual student results — whether Maker100 should become a larger program.
+
+**There is no need to commit to a full course before seeing whether it works in your school.**
+
+### Curriculum
+
+- [Maker100 Leaders Robotics](https://github.com/hpssjellis/maker100-leaders-robotics)
+- [Maker100 Curriculum](https://github.com/hpssjellis/maker100-curriculum)
+- [2026 Price List](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html)
+
+When estimating the pilot cost, set the student count to **7** on the 2026 price list.
+
+---
+
+# Why Maker100?
+
+Traditional robotics courses often depend heavily on a specialized robotics teacher.
+
+Maker100 takes a different approach.
+
+The teacher does not have to know every answer. Instead, students are expected to **figure things out, document what they discover, test their ideas, use available resources, and teach other students**.
+
+This makes the course particularly interesting for schools that have motivated students but do not have a dedicated robotics specialist.
+
+Maker100 is therefore better thought of as a **STEM learning framework built around robotics and electronics** rather than simply another robotics course.
+
+---
+
+# A Robotics Course That Connects Multiple Subjects
+
+A single project can involve concepts from:
+
+- Mathematics
 - Physics
+- Electronics
+- Computer science
+- Programming
+- Engineering
 - Chemistry
 - Biology
-- Communication skills
+- Communication
+- Technical writing
+- Problem solving
 - Peer teaching
+- Artificial intelligence
 
-Because it draws on all of these at once, it fits inside almost any technical elective — it doesn't compete with existing course content, it reinforces it.
+The robotics hardware provides something tangible to work with.
 
-## Why No Specialized Educator Is Required
-- **Students do the problem-solving.** The teacher doesn't need deep robotics expertise.
-- **Hardware changes fast**, which is a feature, not a bug — it guarantees the course keeps producing new problems to solve rather than going stale.
-- **The educator's job is safety and guidance** — not delivering content.
-- **The "Analog Firewall"**: students hand-write summaries and draw circuit diagrams before touching code or hardware. This forces real understanding instead of copy-paste assembly.
-- **"Teach Three"**: every student who makes a discovery is responsible for passing it on to three others. Knowledge moves peer-to-peer, not just teacher-to-student.
-- **LLMs (ChatGPT or private local models) are used as problem-solving aids** — the same way they're used in real engineering work.
+Students don't just learn that a sensor produces a number.
 
-## What "Success" Looks Like
-There are roughly **50 assignments** that must physically work before students move on to final projects. This isn't a course you can fake your way through — each step is a hardware/software checkpoint.
+They have to determine:
 
-## Why the Curriculum Stays Relevant
-The specific hardware will keep getting cheaper, faster, and lower-power — that's expected and doesn't require rewriting the course. The **core concepts don't change**, and most supporting sensors and actuators don't dramatically change either. Interconnected/bundled hardware sets are deliberately avoided, since they tend to hide the very connections between components that make the learning happen.
+> What does the number mean?
 
-## Ask for the PAC
-- Approve pilot funding (~$2,000 USD for 7 students, per the 2026 price list)
-- Identify one existing computer lab course willing to host 7 pilot students
-- Treat this as a **test**, not a commitment — the goal is to gather real evidence for or against a full course
+Then:
 
+> How do I use it?
 
+Then:
 
-The curriculum is at  https://github.com/hpssjellis/maker100-curriculum and may evolve but the basic concepts wont change even as cheaper lower power, faster better core hardware is available
-Most of the supporting hardware sense and actuators do not dramatically change. Interrelated sets are discouraged because they often remove the connections which are the education.
+> How do I program something to respond to it?
 
+And finally:
 
-Disclaimer: Yes a capable group of students can run this course, but a just as capable educator is expected. The educator does not have to be a robotics specialist, but interest in solid classroom
-control and STEM topics is a must. Also a capable IT department is expected at the school district level, that can install the Arduino IDE V2.x, a few other supporting programs like NodeJS and Python3
+> Can I explain what I discovered to someone else?
 
+That connection between components is where much of the learning occurs.
 
+---
 
+# Why LLMs Are Part of the Learning Model
 
+Students are encouraged to use modern AI tools such as ChatGPT as **problem-solving assistants**.
+
+This reflects how programming and engineering increasingly work outside the classroom.
+
+An LLM can help a student:
+
+- Understand an unfamiliar concept
+- Explain an error message
+- Suggest debugging strategies
+- Compare possible approaches
+- Generate example code
+- Explain Arduino libraries
+- Help interpret sensor data
+- Suggest experiments
+- Review a student's explanation
+
+But the student still has to make the hardware work.
+
+This creates an important distinction:
+
+**The LLM can help write the answer. The physical experiment determines whether the answer is actually correct.**
+
+That makes robotics particularly useful in an AI-assisted classroom because students can test ideas against reality.
+
+---
+
+# The "Analog Firewall"
+
+Maker100 includes an important safeguard against simply copying AI-generated code.
+
+Before moving directly into programming, students are encouraged to work through ideas using physical or written representations:
+
+- Handwritten explanations
+- Circuit diagrams
+- Block diagrams
+- Data tables
+- Flowcharts
+- Predictions
+- Experimental observations
+
+The goal is to make students think about **what the system should do before asking a computer or an AI to do it**.
+
+The student should be able to explain the system even if the generated code is wrong.
+
+---
+
+# Teach Three
+
+Maker100 also uses a **"Teach Three"** philosophy.
+
+When a student figures something out, the learning does not stop with that student.
+
+They should be able to explain the discovery to other students.
+
+The objective is to move knowledge:
+
+**student → student → student**
+
+rather than relying entirely on:
+
+**teacher → student**
+
+This is especially valuable when the teacher is facilitating a course rather than acting as the school's robotics expert.
+
+---
+
+# What the Teacher Does
+
+A robotics specialist is **not required**.
+
+However, this does **not** mean that the course can run without a capable educator.
+
+The teacher should be comfortable with:
+
+- Classroom management
+- Student-directed learning
+- Basic STEM concepts
+- Encouraging students to troubleshoot rather than immediately providing answers
+- Maintaining a safe working environment
+- Helping students organize projects and document their work
+
+The teacher does **not** need to know every Arduino board, sensor, programming library, or robotics technique in advance.
+
+A good teacher can often learn alongside the students.
+
+### The teacher's role is primarily:
+
+**Safety + structure + guidance + accountability**
+
+rather than:
+
+**Knowing every technical answer**
+
+---
+
+# What the School IT Department Needs to Provide
+
+A capable district or school IT department is an important part of the setup.
+
+Depending on the selected hardware and activities, students may need access to software such as:
+
+- Arduino IDE 2.x
+- Python 3
+- Node.js
+- Web browsers
+- USB/serial access
+- Appropriate drivers and permissions
+
+The exact software requirements can change as the curriculum evolves.
+
+The important point is that the school should confirm **before purchasing the pilot** that students will be allowed to install/use the required development tools and communicate with USB-connected hardware.
+
+---
+
+# What Success Looks Like
+
+Maker100 is deliberately hands-on.
+
+Students work through a sequence of practical challenges in which the hardware and software have to actually work.
+
+There are approximately **50 assignments/checkpoints** leading toward more open-ended final projects.
+
+This provides a useful advantage for a PAC pilot:
+
+**The school can see evidence of learning.**
+
+Instead of asking:
+
+> "Did the students enjoy robotics?"
+
+the school can also ask:
+
+- Did students complete working projects?
+- Did they understand what they built?
+- Could they troubleshoot problems?
+- Could they explain their solutions?
+- Could they teach other students?
+- Did they become more independent?
+- Did they use AI effectively rather than simply copy answers?
+- Did students want to continue?
+- Was the teacher able to manage the course successfully?
+
+These are much more useful questions when deciding whether to expand the program.
+
+---
+
+# Advantages of the Pilot
+
+### Low financial risk
+
+A PAC does not have to fund an entire new robotics program.
+
+Approximately $2,000 USD allows the school to test the idea with only seven students.
+
+### Small enough to manage
+
+Seven students is large enough to create peer learning but small enough for a teacher to supervise closely.
+
+### No robotics specialist required
+
+A technically capable teacher can facilitate the learning without already being an expert in every part of the curriculum.
+
+### Uses existing courses
+
+The pilot can potentially operate inside an existing:
+
+- Computer science course
+- Web design course
+- Robotics course
+- Electronics course
+- Engineering course
+- Maker course
+
+### Students use current technology
+
+LLMs become part of the learning process rather than something students are expected to ignore.
+
+### Real physical feedback
+
+Unlike purely screen-based programming, students discover quickly when an idea does not work in the physical world.
+
+### Scalable
+
+If successful, additional students, hardware, projects, or courses can be added later.
+
+---
+
+# Possible Concerns and How the Pilot Addresses Them
+
+A credible PAC proposal should also acknowledge the downsides.
+
+## "What if the students aren't interested?"
+
+That's exactly why this is a pilot.
+
+The school is not committing to a multi-year program before testing student interest.
+
+## "What if the teacher doesn't know robotics?"
+
+The teacher does not need to be a robotics specialist.
+
+However, the teacher does need to be interested in STEM, comfortable with classroom management, and willing to let students solve problems independently.
+
+## "Won't students just ask ChatGPT to do everything?"
+
+They might — unless the course structure makes that ineffective.
+
+Physical hardware, handwritten planning, testing, explanations, and peer teaching make it much harder to succeed through simple copy-and-paste.
+
+The objective is not to prevent students from using AI.
+
+It is to teach them how to **use AI while still understanding and testing what it produces**.
+
+## "What if the technology changes?"
+
+The hardware will change.
+
+That is expected.
+
+Boards will become cheaper, faster, smaller, and more energy efficient.
+
+The curriculum therefore emphasizes concepts and connections rather than depending on one permanent piece of hardware.
+
+The specific hardware can evolve while the underlying learning remains relevant.
+
+## "Will we have to buy expensive bundled robotics kits?"
+
+Not necessarily.
+
+Maker100 discourages overly integrated hardware sets when they hide the relationships between components.
+
+Connecting an individual sensor, controller, motor, display, or communication device can itself be part of the learning.
+
+The connections are often the education.
+
+## "Will this create more work for the school?"
+
+There is some setup work.
+
+The school needs an appropriate classroom, teacher, IT support, and hardware setup.
+
+That is why the proposal is deliberately limited to seven students.
+
+The pilot should reveal the real workload before the school considers expansion.
+
+---
+
+# Why Avoid Overly Integrated Hardware?
+
+Many educational kits make robotics easier by combining sensors, processors, motors, communications, and software into a single package.
+
+That can be convenient, but convenience can sometimes remove the very connections students need to understand.
+
+Maker100 generally favors allowing students to see and work with those relationships:
+
+**sensor → data → program → decision → actuator**
+
+Students should understand what is happening between the components.
+
+That knowledge is more transferable than learning how to operate one particular kit.
+
+---
+
+# Keeping the Curriculum Relevant
+
+The [Maker100 curriculum](https://github.com/hpssjellis/maker100-curriculum) will continue to evolve.
+
+Specific boards and components will eventually be replaced by:
+
+- Cheaper hardware
+- Lower-power hardware
+- Faster processors
+- Better sensors
+- More capable microcontrollers
+- Improved software tools
+
+That is not necessarily a problem.
+
+The underlying concepts are much more stable.
+
+For example, students will continue to encounter:
+
+- Inputs
+- Sensors
+- Outputs
+- Motors
+- Data
+- Programming
+- Feedback
+- Communication
+- Control systems
+- Debugging
+- Measurement
+- Physical constraints
+
+Most supporting sensors and actuators also tend to remain conceptually similar even as individual products change.
+
+The goal is therefore to **update the tools without constantly reinventing the education**.
+
+---
+
+# The $2,000 Experiment
+
+The PAC is not being asked:
+
+> "Will you fund an entire new robotics program?"
+
+The question is much smaller:
+
+> **"Will you fund a seven-student experiment to find out whether our school should have one?"**
+
+For approximately **$2,000 USD**, the school can test:
+
+1. Student interest
+2. Teacher workload
+3. IT requirements
+4. Hardware reliability
+5. Student independence
+6. AI-assisted learning
+7. Hands-on STEM learning
+8. The feasibility of expanding the program
+
+That is a much smaller risk than committing immediately to a full standalone course.
+
+---
+
+# Recommended Pilot Structure
+
+### Step 1 — Select Students
+
+Choose approximately seven students who demonstrate:
+
+- Motivation
+- Curiosity
+- Persistence
+- Reasonable mathematics/physics ability
+- Willingness to troubleshoot
+- Willingness to work independently
+
+They do **not** need previous robotics experience.
+
+### Step 2 — Select the Host Course
+
+Embed the students in an existing course such as:
+
+- Computer science
+- Web design
+- Robotics
+- Electronics
+- Engineering
+- Computer studies
+
+For example, seven students in a web-design course could work through Maker100 projects while the remainder of the class continues with the normal curriculum.
+
+### Step 3 — Prepare the Technology
+
+Before the pilot begins:
+
+- Purchase the required hardware
+- Install required software
+- Confirm USB/serial permissions
+- Test the basic hardware
+- Confirm students can access appropriate AI tools
+
+### Step 4 — Run the Pilot
+
+Students work through the practical assignments.
+
+The teacher facilitates.
+
+Students use documentation, web resources, classmates, and LLMs to solve problems.
+
+### Step 5 — Measure the Results
+
+At the end of the pilot, evaluate:
+
+- Completed projects
+- Student understanding
+- Student engagement
+- Student independence
+- Teacher experience
+- IT workload
+- Hardware problems
+- Student interest in continuing
+
+### Step 6 — Decide
+
+The school can then make an evidence-based decision:
+
+**Expand, modify, or stop.**
+
+No large program commitment is necessary until the school has its own evidence.
+
+---
+
+# The Bottom Line
+
+Maker100 Leaders Robotics is an opportunity to test a modern approach to STEM education without requiring a school to immediately hire a robotics specialist or create a new standalone course.
+
+The model combines:
+
+**Hands-on hardware + programming + STEM concepts + peer teaching + AI-assisted problem solving**
+
+The PAC provides a relatively small investment.
+
+The school provides the classroom, teacher, and IT support.
+
+The students provide the curiosity and persistence.
+
+And the pilot provides something much more valuable than a sales promise:
+
+**evidence from your own students in your own school.**
+
+---
+
+## PAC Request
+
+**We are asking the PAC to approve approximately $2,000 USD to run a seven-student Maker100 Leaders Robotics pilot.**
+
+The pilot should be treated as an experiment.
+
+If it works, the school will have a foundation for a larger program.
+
+If it does not, the school will have learned that for approximately $2,000 — rather than after committing to a much larger program.
+
+**The goal is not to promise that Maker100 will work at every school.**
+
+**The goal is to give one school a practical, affordable way to find out.**
 
