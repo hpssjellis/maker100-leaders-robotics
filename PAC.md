@@ -90,6 +90,23 @@ If the pilot works, we'll bring real evidence to the administration to fund a fu
 
 
 
+**POST**
+
+Most robotics courses hand students a kit and a manual. Maker100 Leaders Robotics does the opposite — it hands 7 driven students a rapidly-changing set of sensors, boards, and a lot of unanswered questions, and asks them to figure it out.
+
+No robotics specialist required. No new class to create. Just 7 math/science-capable students embedded inside an existing computer lab, robotics, or web design course, working through ~50 hands-on checkpoints using hand-written circuit diagrams, real hardware, peer teaching ("Teach Three"), and LLMs as problem-solving assistants — the same way engineers use them in the field.
+
+The hardware will keep changing — cheaper, faster, lower power, every year. That's not a bug in this curriculum, it's the point: students learn to adapt to new tools instead of memorizing one kit. The concepts underneath (inputs, sensors, feedback, debugging, communication) don't go stale.
+
+We just put together a proposal for how a school's Parent Advisory Committee can pilot this for about $2,000 — inside a course that already exists — to test, with real evidence, whether their school is ready to build a full course around it.
+
+Full pilot proposal here: https://github.com/hpssjellis/maker100-leaders-robotics/blob/main/PAC.md
+
+If you're a parent, educator, or admin thinking about how to challenge your most driven STEM students — not just keep them busy, but actually stretch them — I'd love your thoughts on this.
+
+#STEMeducation #Robotics #TinyML #FutureOfWork #K12 #EdTech #MakerEducation
+
+
 
 
 
