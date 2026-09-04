@@ -80,7 +80,7 @@ The hardware can change. The learning can continue.
 
 
 
-** In Person Intro: **
+**In Person Summary:**
 
 Tonight I'm asking the PAC to consider a small, low-risk experiment: about $2,000 to run a seven-student pilot of a hands-on robotics and electronics program called Maker100, inside a class that's already running at our school. The students selected will have strong math/science grades, and priority will go to anyone with prior Raspberry Pi or Arduino experience, or a stated interest in engineering — so we're building on curiosity that's already there.
 
