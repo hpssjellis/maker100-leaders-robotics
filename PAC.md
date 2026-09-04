@@ -7,7 +7,7 @@ Give a small group of motivated high school students the chance to explore **rob
 
 **Maker100 Leaders Robotics** is a meta-course that gets embedded inside an *existing* computer lab, robotics, electronics, programming, or web-design course.
 
-**The 7 students are not a new class.** They're selected from a class that already exists, with a teacher who already teaches it. For example: a Grade 10 Web Design class has 25 students. Seven motivated students are chosen to run Maker100 projects during an agreed portion of class time, while the teacher continues teaching Web Design to everyone else. The seven stay enrolled in the normal course — Maker100 becomes an additional, student-directed pathway inside it, not a separate section the teacher has to run on top of their existing load.
+**The 7 students are not a new class.** They're selected from a class that already exists, with a teacher who already teaches it. For example: a Grade 10 Web Design class has 25 students. Seven (±1) motivated students are chosen to run Maker100 projects during an agreed portion of class time, while the teacher continues teaching Web Design to everyone else. The seven stay enrolled in the normal course — Maker100 becomes an additional, student-directed pathway inside it, not a separate section the teacher has to run on top of their existing load.
 
 This same model works inside computer science, robotics, electronics, engineering, or any general computer lab / STEM course.
 
@@ -48,7 +48,17 @@ Hardware will keep getting cheaper, faster, and lower-power — expected, and it
 
 The PAC is well positioned to fund this **pilot** — a small, one-time cost to prove the concept. It is *not* the right long-term funder for a full standalone course. If the pilot succeeds and the school decides to run Maker100 as a full course, that decision — and its ongoing funding — should shift to the administration/district budget.
 
-In other words: **the PAC's role is to buy the evidence, not to become the permanent funding source.** Framing it this way up front protects the PAC from being expected to fund a recurring course indefinitely, and gives the PAC a clear, natural point to hand the idea off to admin with a strong case in hand.
+**The PAC's role is to buy the evidence, not to become the permanent funding source.** Framing it this way up front protects the PAC from being expected to fund a recurring course indefinitely, and gives the PAC a clear, natural point to hand the idea off to admin with a strong case in hand.
+
+## Cons & Potential Hurdles (Things to Anticipate)
+
+**Classroom management & noise.** The Maker100 students, working heads-down on breadboards, sensors, and code, tend to be quiet and focused by nature of the task. The more realistic classroom-management risk is the *other* students in the room — a subset visibly doing something different and hands-on can be a distraction for the rest of the class, and that's a conversation to have with the host teacher up front, not something to gloss over.
+
+**IT department friction.** School IT departments can be cautious about local device permissions. In practice, installing the Arduino IDE is a routine, low-risk install. If it does hit friction, **PlatformIO with VS Code** is a solid fallback that installs cleanly on Windows and avoids some of the friction points of the standalone Arduino IDE.
+
+**Assessment complexity.** The host teacher is already grading a different subject and shouldn't be expected to build a parallel assessment system from scratch. The pilot handles this by putting the tracking burden on the students themselves: a **shared chart of all ~50 assignments**, checked off as each is physically completed and verified. This keeps assessment lightweight for the teacher while still producing a clear, auditable record of progress.
+
+**Selection bias.** Choosing only seven (±1) students always raises a fairness question. For this pilot, selection is based on **combined math/science grades** — a straightforward, defensible metric rather than teacher subjective judgment. Because this is a small proof-of-concept, not the final program, it's deliberately scoped to students who can work independently with minimal support. When the program expands to a full class, the pilot cohort's role shifts to **teaching the incoming students** — Teach Three at full-class scale — which is how the model extends access rather than staying limited to an initial small group.
 
 ---
 
@@ -75,12 +85,12 @@ The PAC funds the pilot. If the school decides to run Maker100 as a full course 
 ## Suggested Pilot Steps
 
 1. **Identify a host course** (CS, web design, robotics, electronics, engineering, or similar) and a willing teacher.
-2. **Select ~7 students** for motivation, curiosity, and persistence — not necessarily the strongest coders.
-3. **Agree on logistics** — how much class time, how it's assessed, how normal course requirements are still met.
-4. **Prep the tech** — purchase hardware, install software, confirm USB/serial permissions.
+2. **Select ~7 students** (±1) using combined math/science grades — motivation and independence matter more than being the strongest coder.
+3. **Agree on logistics** — how much class time, how progress is tracked (the 50-assignment chart), how normal course requirements are still met.
+4. **Prep the tech** — purchase hardware, install software (Arduino IDE, with PlatformIO/VS Code as a fallback), confirm USB/serial permissions.
 5. **Run the pilot** — Build → Test → Fail → Understand → Fix → Explain.
 6. **Measure results** — completed projects, student independence, teacher workload, interest in continuing.
-7. **Decide** — expand, adjust, or stop, based on your own school's evidence. If expanding to a full course, hand off funding responsibility to the administration.
+7. **Decide** — expand, adjust, or stop, based on your own school's evidence. If expanding to a full course, hand off funding responsibility to the administration, and have pilot students help teach the incoming class.
 
 ---
 
