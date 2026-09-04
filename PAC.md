@@ -44,6 +44,12 @@ Hardware will keep getting cheaper, faster, and lower-power — expected, and it
 3. Confirm IT support for installing required software (Arduino IDE, Python, Node.js, USB/serial access)
 4. Treat this as a **test**, not a commitment — the goal is real evidence, not a promise
 
+## An Important Note on Funding Beyond the Pilot
+
+The PAC is well positioned to fund this **pilot** — a small, one-time cost to prove the concept. It is *not* the right long-term funder for a full standalone course. If the pilot succeeds and the school decides to run Maker100 as a full course, that decision — and its ongoing funding — should shift to the administration/district budget.
+
+In other words: **the PAC's role is to buy the evidence, not to become the permanent funding source.** Framing it this way up front protects the PAC from being expected to fund a recurring course indefinitely, and gives the PAC a clear, natural point to hand the idea off to admin with a strong case in hand.
+
 ---
 
 # Appendix: Common Questions
@@ -63,6 +69,9 @@ No — Maker100 discourages heavily integrated kits because they hide the relati
 **What if the technology changes?**
 Expected and fine. The curriculum emphasizes concepts and connections, not one fixed generation of hardware.
 
+**Who pays if this becomes a full course?**
+The PAC funds the pilot. If the school decides to run Maker100 as a full course afterward, that funding should come from the school/district, not the PAC.
+
 ## Suggested Pilot Steps
 
 1. **Identify a host course** (CS, web design, robotics, electronics, engineering, or similar) and a willing teacher.
@@ -71,7 +80,7 @@ Expected and fine. The curriculum emphasizes concepts and connections, not one f
 4. **Prep the tech** — purchase hardware, install software, confirm USB/serial permissions.
 5. **Run the pilot** — Build → Test → Fail → Understand → Fix → Explain.
 6. **Measure results** — completed projects, student independence, teacher workload, interest in continuing.
-7. **Decide** — expand, adjust, or stop, based on your own school's evidence.
+7. **Decide** — expand, adjust, or stop, based on your own school's evidence. If expanding to a full course, hand off funding responsibility to the administration.
 
 ---
 
