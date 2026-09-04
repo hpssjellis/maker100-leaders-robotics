@@ -1,4 +1,3 @@
-
 # Bring Maker100 Leaders Robotics to Your High School
 ## A $2,000 PAC Pilot Proposal
 
@@ -12,27 +11,78 @@ The proposed PAC pilot is intentionally small:
 
 - **7 students**
 - Approximately **$2,000 USD** in startup funding
-- Hosted inside an existing course
+- Hosted inside an **existing course with an existing teacher**
 - No robotics-specialist teacher required
 - Students use **LLMs such as ChatGPT as learning and problem-solving assistants**
 - Students learn by building, testing, explaining, and teaching
 - The pilot produces evidence that can help the school decide whether a larger program is worthwhile
 
-This is a **pilot, not a commitment to create a new course**.
+**This is a pilot, not a commitment to create a new course.**
 
 ---
 
-## The PAC Ask
+# How the 7-Student Pilot Actually Works
 
-We are asking the PAC to fund approximately **$2,000 USD** for a 7-student pilot.
+**The school does NOT create a separate class for seven students.**
+
+The seven students are selected from an **existing class that already has a teacher**.
+
+For example:
+
+> A regular Grade 10 Web Design class has 25 students.  
+> Seven motivated students are selected to participate in the Maker100 pilot.  
+> The teacher continues teaching Web Design to the entire class.  
+> The seven Maker100 students use an agreed portion of their class time to work through Maker100 projects.
+
+The same model could work inside:
+
+- Computer science
+- Web design
+- Robotics
+- Electronics
+- Engineering
+- A general computer lab course
+- Another suitable STEM or technology course
+
+The seven students remain members of the normal class. **Maker100 becomes an additional student-directed pathway within that existing course.**
+
+The teacher does **not** stop teaching the other students to teach seven robotics students.
+
+This distinction is central to the PAC proposal.
+
+### What the Teacher Needs to Do
+
+The teacher remains responsible for the entire class.
+
+They do not need to be a robotics specialist or know every answer.
+
+Instead, the teacher provides:
+
+- Classroom management
+- Safety
+- Structure
+- Encouragement
+- Accountability
+- General STEM guidance
+
+The Maker100 students are expected to do much of the technical problem-solving themselves using documentation, experimentation, classmates, and LLMs.
+
+This makes the model particularly useful for schools that have motivated students but do not have a dedicated robotics specialist.
+
+---
+
+# The PAC Ask
+
+We are asking the PAC to fund approximately **$2,000 USD** for a 7-student Maker100 pilot.
 
 The school would provide:
 
 1. An existing computer lab or suitable classroom
-2. A capable teacher to supervise the students
-3. Normal school computer access
-4. District/school IT support for installing required software
-5. Approximately 7 motivated students
+2. An existing course willing to host the seven students
+3. A capable teacher who is already teaching that course
+4. Normal school computer access
+5. District/school IT support for installing required software
+6. Approximately seven motivated students
 
 The PAC provides the hardware and startup resources needed for the pilot.
 
@@ -262,9 +312,11 @@ A PAC does not have to fund an entire new robotics program.
 
 Approximately $2,000 USD allows the school to test the idea with only seven students.
 
-### Small enough to manage
+### No new seven-student class
 
-Seven students is large enough to create peer learning but small enough for a teacher to supervise closely.
+The students participate within an existing class.
+
+The school does not need to create a separate course just to test Maker100.
 
 ### No robotics specialist required
 
@@ -311,6 +363,16 @@ The teacher does not need to be a robotics specialist.
 
 However, the teacher does need to be interested in STEM, comfortable with classroom management, and willing to let students solve problems independently.
 
+## "Does the teacher have to teach seven students separately?"
+
+**No.**
+
+The seven students remain part of the existing class.
+
+For example, a teacher might have 25 students in a Web Design class. Seven students could work on Maker100 during an agreed portion of the class while the teacher continues supporting the other 18 students with the normal curriculum.
+
+The exact arrangement would be determined by the host teacher and school.
+
 ## "Won't students just ask ChatGPT to do everything?"
 
 They might — unless the course structure makes that ineffective.
@@ -347,7 +409,7 @@ The connections are often the education.
 
 There is some setup work.
 
-The school needs an appropriate classroom, teacher, IT support, and hardware setup.
+The school needs an appropriate classroom, an existing teacher, IT support, and hardware setup.
 
 That is why the proposal is deliberately limited to seven students.
 
@@ -436,7 +498,27 @@ That is a much smaller risk than committing immediately to a full standalone cou
 
 # Recommended Pilot Structure
 
-### Step 1 — Select Students
+## Step 1 — Identify an Existing Host Course
+
+Find an existing class with a teacher willing to host the pilot.
+
+Good candidates include:
+
+- Computer science
+- Web design
+- Robotics
+- Electronics
+- Engineering
+- Computer studies
+- Other technology/STEM courses
+
+The seven students **remain enrolled in the existing course**.
+
+The school does not need to create a separate seven-student robotics class.
+
+---
+
+## Step 2 — Select Students
 
 Choose approximately seven students who demonstrate:
 
@@ -449,20 +531,27 @@ Choose approximately seven students who demonstrate:
 
 They do **not** need previous robotics experience.
 
-### Step 2 — Select the Host Course
+They also do not need to be the seven students with the strongest programming skills.
 
-Embed the students in an existing course such as:
+In many cases, persistence and curiosity may be more important than prior experience.
 
-- Computer science
-- Web design
-- Robotics
-- Electronics
-- Engineering
-- Computer studies
+---
 
-For example, seven students in a web-design course could work through Maker100 projects while the remainder of the class continues with the normal curriculum.
+## Step 3 — Define How Maker100 Fits the Existing Class
 
-### Step 3 — Prepare the Technology
+The host teacher and school should decide:
+
+- When the seven students work on Maker100
+- How much class time they can use
+- How their normal course requirements will be maintained
+- How projects will be assessed or documented
+- When students may need additional access to the lab
+
+The goal is to make Maker100 an **enrichment pathway**, not to disrupt the existing course.
+
+---
+
+## Step 4 — Prepare the Technology
 
 Before the pilot begins:
 
@@ -472,7 +561,9 @@ Before the pilot begins:
 - Test the basic hardware
 - Confirm students can access appropriate AI tools
 
-### Step 4 — Run the Pilot
+---
+
+## Step 5 — Run the Pilot
 
 Students work through the practical assignments.
 
@@ -480,7 +571,13 @@ The teacher facilitates.
 
 Students use documentation, web resources, classmates, and LLMs to solve problems.
 
-### Step 5 — Measure the Results
+The emphasis is on:
+
+**Build → Test → Fail → Understand → Fix → Explain**
+
+---
+
+## Step 6 — Measure the Results
 
 At the end of the pilot, evaluate:
 
@@ -493,7 +590,9 @@ At the end of the pilot, evaluate:
 - Hardware problems
 - Student interest in continuing
 
-### Step 6 — Decide
+---
+
+## Step 7 — Decide
 
 The school can then make an evidence-based decision:
 
@@ -513,7 +612,7 @@ The model combines:
 
 The PAC provides a relatively small investment.
 
-The school provides the classroom, teacher, and IT support.
+The school provides an existing course, an existing teacher, classroom access, and IT support.
 
 The students provide the curiosity and persistence.
 
@@ -525,7 +624,7 @@ And the pilot provides something much more valuable than a sales promise:
 
 ## PAC Request
 
-**We are asking the PAC to approve approximately $2,000 USD to run a seven-student Maker100 Leaders Robotics pilot.**
+**We are asking the PAC to approve approximately $2,000 USD to run a seven-student Maker100 Leaders Robotics pilot within an existing course.**
 
 The pilot should be treated as an experiment.
 
@@ -537,3 +636,32 @@ If it does not, the school will have learned that for approximately $2,000 — r
 
 **The goal is to give one school a practical, affordable way to find out.**
 
+---
+
+## Important Implementation Disclaimer
+
+Maker100 is designed so that a robotics specialist is not required, but it still requires a **capable educator**.
+
+The teacher should have a genuine interest in STEM topics, be able to maintain solid classroom management, and be comfortable with student-directed problem solving.
+
+The school or district should also have capable IT support available for the initial setup.
+
+Depending on the hardware and curriculum version, this may include installing:
+
+- Arduino IDE 2.x
+- Node.js
+- Python 3
+- Supporting libraries and tools
+- USB/serial permissions and drivers
+
+The curriculum is hosted at:
+
+https://github.com/hpssjellis/maker100-curriculum
+
+The curriculum may continue to evolve as new hardware becomes available. However, the **basic concepts and learning objectives are intended to remain useful even as hardware becomes cheaper, faster, smaller, and more power efficient**.
+
+Most supporting sensors and actuators also do not change dramatically in their fundamental operation.
+
+The curriculum therefore emphasizes understanding the relationships between components rather than becoming dependent on a particular generation of hardware.
+
+**The hardware can change. The learning can continue.**
