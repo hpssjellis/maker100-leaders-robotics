@@ -11,7 +11,7 @@
 
 **Maker100 Leaders Robotics is free, open source, and permanently online.** It isn't a product a school buys once, it's a living curriculum that keeps evolving as hardware gets cheaper and better, and it will still be there next year, and the year after. The only real cost is the hardware students build with.
 
-This proposal asks the PAC to fund a small pilot, about $2,000 for 7 students, inside a course that already exists at the school. But **7 is just a doable starting number, not a ceiling.** A teacher confident enough could run this with 15 students, or an entire class. Seven is simply a low-risk size to prove it out first.
+This proposal asks the PAC to fund a small pilot, about $2,000 USD for 7 students, inside a course that already exists at the school. But **7 is just a doable starting number, not a ceiling.** A teacher confident enough could run this with 15 students, or an entire class. Seven is simply a low-risk size to prove it out first.
 
 **Curriculum:** [maker100-curriculum](https://github.com/hpssjellis/maker100-curriculum)
 **Underlying course materials:** [maker100-leaders-robotics](https://github.com/hpssjellis/maker100-leaders-robotics/tree/main)
@@ -109,7 +109,7 @@ The hardware can change. The curriculum stays free. The learning can continue.
 
 ## In-Person Summary
 
-Tonight I'm asking the PAC to consider a small, low-risk experiment: about $2,000 to run a seven-student pilot of a free, open-source robotics and electronics course called Maker100, inside a class that's already running at our school. Seven is just a doable number to start with, any teacher confident enough could run it with a whole class.
+Tonight I'm asking the PAC to consider a small, low-risk experiment: about $2,000 USD to run a seven-student pilot of a free, open-source robotics and electronics course called Maker100, inside a class that's already running at our school. Seven is just a doable number to start with, any teacher confident enough could run it with a whole class.
 
 This isn't a request to create a new course, and it isn't a request to fund something ongoing, the curriculum itself is free and stays online permanently. What the PAC funds is hardware and a proof point. I'm available to help start it up and support a couple of pinch points during the year, and if your school is nearby in the Fraser Valley I can do that in person, but the course is built so that isn't actually required, any comfortable Arduino maker, teacher, or parent could fill that role.
 
@@ -117,7 +117,7 @@ One more thing worth mentioning: the course respects student privacy. It teaches
 
 What matters more than any of that logistics is what this actually does for students: it prepares leaders for a world that keeps changing, it prepares engineers for hands-on technology before they ever hit the math of university, and it prepares makers to understand the power of the tools shaping the modern world, not just consume them.
 
-If the pilot works, we'll bring real evidence to the administration, and growing it only costs more hardware, not a new program. If it doesn't, we'll have learned that for $2,000. What I'm asking for tonight is approval to run this small pilot and come back with results.
+If the pilot works, we'll bring real evidence to the administration, and growing it only costs more hardware, not a new program. If it doesn't, we'll have learned that for $2,000 USD. What I'm asking for tonight is approval to run this small pilot and come back with results.
 
 ---
 
@@ -133,7 +133,7 @@ Seven students is just a low-risk number to pilot with, any teacher ready to go 
 
 What it actually does matters more than the logistics: it prepares leaders for a world that won't stop changing, it prepares engineers for hands-on technology before they ever hit the math of university, and it prepares makers to understand the power of the tools running the modern world, instead of just consuming them.
 
-We put together a proposal for how a school's Parent Advisory Committee can pilot this for about $2,000 inside a course that already exists: https://github.com/hpssjellis/maker100-leaders-robotics/blob/main/PAC.md
+We put together a proposal for how a school's Parent Advisory Committee can pilot this for about $2,000 USD inside a course that already exists: https://github.com/hpssjellis/maker100-leaders-robotics/blob/main/PAC.md
 
 If you're a parent, educator, or admin thinking about how to actually stretch your most driven STEM students, I'd love your thoughts.
 
