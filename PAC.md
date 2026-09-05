@@ -5,7 +5,7 @@
 ## PAC.md
 
 # Bring Maker100 Leaders Robotics to Your High School
-## A Free, Open-Source Course, Piloted for About $2,000
+## A Free, Open-Source Course, Piloted for 7 Students About $2,000 USD.
 
 ### The Big Idea First
 
@@ -13,8 +13,8 @@
 
 This proposal asks the PAC to fund a small pilot, about $2,000 for 7 students, inside a course that already exists at the school. But **7 is just a doable starting number, not a ceiling.** A teacher confident enough could run this with 15 students, or an entire class. Seven is simply a low-risk size to prove it out first.
 
-**Curriculum:** [maker100-leaders-robotics](https://github.com/hpssjellis/maker100-leaders-robotics/tree/main)
-**Underlying course materials:** [maker100-curriculum](https://github.com/hpssjellis/maker100-curriculum)
+**Curriculum:** [maker100-curriculum](https://github.com/hpssjellis/maker100-curriculum)
+**Underlying course materials:** [maker100-leaders-robotics](https://github.com/hpssjellis/maker100-leaders-robotics/tree/main)
 **2026 Price List:** [price-list-2026.html](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html) *(set student count to 7 for this pilot, or change it for a larger group)*
 
 ### What This Actually Prepares Students For
