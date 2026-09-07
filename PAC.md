@@ -11,11 +11,11 @@
 
 **Maker100 Leaders Robotics is free, open source, and permanently online.** It isn't a product a school buys once, it's a living curriculum that keeps evolving as hardware gets cheaper and better, and it will still be there next year, and the year after. The only real cost is the hardware students build with.
 
-This proposal asks the PAC to fund a small pilot, about $2,000 USD for 7 students, inside a course that already exists at the school. But **7 is just a doable starting number, not a ceiling.** A teacher confident enough could run this with 15 students, or an entire class. Seven is simply a low-risk size to prove it out first.
+This proposal asks the PAC to fund a small pilot, about $2,000 USD for 7 +-2 students, inside a course that already exists at the school. But **7 is just a doable starting number, not a ceiling.** A teacher confident enough could run this with 15 students, or an entire class. Seven is simply a low-risk size to prove it out first.
 
 **Curriculum:** [maker100-curriculum](https://github.com/hpssjellis/maker100-curriculum)
 **Underlying course materials:** [maker100-leaders-robotics](https://github.com/hpssjellis/maker100-leaders-robotics/tree/main)
-**2026 Price List:** [price-list-2026.html](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html) *(set student count to 7 for this pilot, or change it for a larger group)*
+**2026 Price List:** [price-list-2026.html](https://hpssjellis.github.io/maker100-leaders-robotics/price-list-2026.html) *(set student count to  for this pilot, or change it for a larger group)*
 
 ### What This Actually Prepares Students For
 
@@ -45,10 +45,11 @@ Funding this pilot is a visible, low-cost way to say, we invest in students who 
 
 ### The PAC Ask
 
-1. Approve pilot funding (~$2,000 USD for 7 students, per the 2026 price list, adjustable for a different group size)
-2. Identify one existing course and teacher willing to host the pilot
-3. Confirm IT support for installing required software (Arduino IDE, Python, Node.js, USB/serial access)
-4. Treat this as a test, not a commitment, the goal is real evidence, not a promise
+1. Approve pilot funding (~$2,000 USD for 7 students +-2, per the 2026 price list, adjustable for a different group size)
+2. Note: Expect 1/4 cost for repeating the pilot for consumables. (Expect the students to break a few things, like microcontrollers, wires, connectors, USB-C cables, micro SD cards, OLED's, RangeFinders, next generation MCU's etc.) So to run this course again for another 7 students at a quarter the startup cost expect $500 USD each time.
+3. Identify one existing course and teacher willing to host the pilot
+4. Confirm IT support for installing required software (Arduino IDE, Python, Node.js, USB/serial access)
+5. Treat this as a test, not a commitment, the goal is real evidence, not a promise
 
 ### An Important Note on Funding Beyond the Pilot
 
@@ -72,7 +73,7 @@ The PAC is well positioned to fund this pilot, a small, one-time cost. It is not
 Yes, the curriculum is open source on GitHub and stays that way. The pilot cost is hardware, not licensing or curriculum fees.
 
 **Does it have to be exactly 7 students?**
-No. Seven is a low-risk number to pilot with. A confident teacher could run this with a full class from day one.
+No. Seven +-2 is a low-risk number to pilot with. A confident teacher could run this with a full class from day one.
 
 **What about student data and privacy?**
 Students can do the entire course using local, on-device methods and offline LLMs, with nothing sent to the cloud. This also helps schools navigating new restrictions on student cloud accounts.
@@ -92,7 +93,7 @@ Expected and fine, the curriculum emphasizes concepts and connections, not one f
 ### Suggested Pilot Steps
 
 1. Identify a host course and a willing teacher.
-2. Select ~7 students (or more) by combined math/science grade, prioritizing prior Raspberry Pi/Arduino experience or engineering aspirations.
+2. Select ~7 students +-2 by combined math/science grade, prioritizing prior Raspberry Pi/Arduino experience or engineering aspirations.
 3. Agree on logistics, class time, progress tracking via the 50-assignment chart.
 4. Prep the tech, hardware, software install, USB/serial permissions.
 5. Run the pilot, Build, Test, Fail, Understand, Fix, Explain.
@@ -123,7 +124,7 @@ If the pilot works, we'll bring real evidence to the administration, and growing
 
 ## LinkedIn Post
 
-Most robotics courses hand students a kit and a manual. Maker100 Leaders Robotics hands 7 driven students a rapidly-changing set of sensors, boards, and a lot of unanswered questions, and asks them to figure it out.
+Most robotics courses hand students a kit and a manual. Maker100 Leaders Robotics hands 7 +-2 driven students a rapidly-changing set of sensors, boards, and a lot of unanswered questions, and asks them to figure it out.
 
 The course is free, open source, and permanently online. No robotics specialist required, not even me. I can show up a few times a semester to help a class start (in person if you're in the BC Fraser Valley, remotely otherwise), but I built this so I'm not actually needed, any Arduino-comfortable teacher, parent, or maker can run it. Students work through ~50 hands-on checkpoints with hand-written circuit diagrams, real hardware, peer teaching ("Teach Three"), and LLMs as problem-solving assistants, the way engineers actually use them.
 
