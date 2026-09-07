@@ -9,7 +9,7 @@
 
 ### The Big Idea First
 
-**Maker100 Leaders Robotics is free, open source, and permanently online.** It isn't a product a school buys once, it's a living curriculum that keeps evolving as hardware gets cheaper and better, and it will still be there next year, and the year after. The only real cost is the hardware students build with.
+**Maker100 Leaders Robotics is free, open source, and permanently online.** It isn't a product a school buys once, it's a living curriculum that keeps evolving as hardware gets cheaper, faster, smaller and better, and it will still be there next year, and the year after. The only real cost is the hardware students build with.
 
 This proposal asks the PAC to fund a small pilot, about $2,000 USD for 7 +-2 students, inside a course that already exists at the school. But **7 is just a doable starting number, not a ceiling.** A teacher confident enough could run this with 15 students, or an entire class. Seven is simply a low-risk size to prove it out first.
 
