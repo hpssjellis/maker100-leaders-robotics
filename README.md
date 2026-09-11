@@ -77,13 +77,14 @@ Note: Student Ryan H found the [Arduino Droid](https://play.google.com/store/app
 
 | # | Category | Assignment | Quick Link |
 | :--- | :--- | :--- | :--- |
-| [a00-test](#a00-test) | **Hardware Check** | Test your XIAO ML Kit — camera, mic, IMU and OLED all at once | [xiaoml-kit-esp32-web-tool](https://hpssjellis.github.io/xiaoml-kit-esp32-web-tool/public/index.html) |
+| [a00-test](#a00-test) | **Hardware Check** | Test your XIAO ML Kit — camera, mic, IMU and OLED all at once | [xiaoml-kit-esp32-web-tool](https://hpssjellis.github.io/xiaoml-kit-esp32-web-tool/public/index.html)|
+| [a02-sensecraft](#a02-sensecraft) | **Machine Learning** | Seeed SenseCraft — install a pre-built ML model | [sensecraft.seeed.cc](https://sensecraft.seeed.cc/ai/#/home) |
 | [a03-blink-serial](#a03-blink-serial) | **Basics / Coding** | Blink + Serial Print on Arduino IDE and PlatformIO | [seeed-blink-serial.ino](seeed-sketches/seeed-blink-serial.ino) |
 | [a07-button](#a07-button) | **Sensors** | Button controls LED — your first sensor + actuator | [seeed-led-button.ino](seeed-sketches/seeed-led-button.ino) |
 | [a19-servo](#a19-servo) | **Actuators** | Servo motor | [seeed-servo-needs-ESP32Servo-include.ino](seeed-sketches/seeed-servo-needs-ESP32Servo-include.ino) |
 | [a36-camera-web-server](#a36-camera-web-server) | **IoT** | Camera web server streaming over WiFi | Arduino IDE → Examples → ESP32 → Camera → CameraWebServer |
 | [a56-handpose](#a56-handpose) | **WebAI** | HandPose in the browser — no hardware needed | [handpose](https://hpssjellis.github.io/beginner-tensorflowjs-examples-in-javascript/tfjs-models/handpose/index.html) |
-| [a02-sensecraft](#a02-sensecraft) | **Machine Learning** | Seeed SenseCraft — install a pre-built ML model | [sensecraft.seeed.cc](https://sensecraft.seeed.cc/ai/#/home) |
+
 
 ---
 
