@@ -1,24 +1,24 @@
-Students-->,Fred,Peter,Mary,Joe,"________","________","________","________","________",,assignmentShortName
-0,*,✓,?,✓,,,,,,,intro
-1,,,,,,,,,,led blink
-2,,,,,,,,,,button input
-3,,,,,,,,,,analog read
-4,,,,,,,,,,pwm fade
-5,,,,,,,,,,rgb led
-6,,,,,,,,,,servo motor
-7,,,,,,,,,,ultrasonic sensor
-8,,,,,,,,,,dht11 temp
-9,,,,,,,,,,oled display
-10,,,,,,,,,,neopixel strip
-11,,,,,,,,,,wifi connect
-12,,,,,,,,,,mqtt publish
-13,,,,,,,,,,webserver
-14,,,,,,,,,,ble uart
-15,,,,,,,,,,camera capture
-16,,,,,,,,,,sound to sd
-17,,,,,,,,,,tinyml inferencing
-18,,,,,,,,,,webgpu dashboard
-19,,,,,,,,,,final project
+Students-->,Fred,Peter,Mary,Joe,"________","________","________","________","________",Topic
+0,*,✓,?,✓,,,,,,Webtool
+1,,,,,,,,,,On-Device ML
+2,,,,,,,,,,Sensecraft
+3,,,,,,,,,,Blink-Serial
+4,,,,,,,,,,Serial-Putty
+5,,,,,,,,,,
+6,,,,,,,,,,
+7,,,,,,,,,,
+8,,,,,,,,,,
+9,,,,,,,,,,
+10,,,,,,,,,,
+11,,,,,,,,,,
+12,,,,,,,,,,
+13,,,,,,,,,,
+14,,,,,,,,,,
+15,,,,,,,,,,
+16,,,,,,,,,,
+17,,,,,,,,,,
+18,,,,,,,,,,
+19,,,,,,,,,,
 20,,,,,,,,,,
 21,,,,,,,,,,
 22,,,,,,,,,,
