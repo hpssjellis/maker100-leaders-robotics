@@ -1,15 +1,15 @@
 Students-->,Fred,Peter,Mary,Joe,"________","________","________","________","________",Topic
-0,*,✓,?,✓,,,,,,Webtool
-1,,,,,,,,,,On-Device ML
-2,,,,,,,,,,Sensecraft
-3,,,,,,,,,,Blink-Serial
-4,,,,,,,,,,Serial-Putty
-5,,,,,,,,,,
-6,,,,,,,,,,
-7,,,,,,,,,,
-8,,,,,,,,,,
-9,,,,,,,,,,
-10,,,,,,,,,,
+0,*,✓,?,✓,,,,,,a00-Webtool
+1,,,,,,,,,,a01-on-device-ml
+2,,,,,,,,,,a02-sensecraft
+3,,,,,,,,,,a03-blink-serial
+4,,,,,,,,,,a04-serial-putty
+5,,,,,,,,,,a05-flash-sos
+6,,,,,,,,,,a06-coding-assignments
+7,,,,,,,,,,a07-button
+8,,,,,,,,,,a08-oled-hello
+9,,,,,,,,,,a09-imu-motion
+10,,,,,,,,,,a10-voltage-divider
 11,,,,,,,,,,
 12,,,,,,,,,,
 13,,,,,,,,,,
