@@ -31,7 +31,7 @@ The WebMCU-AI Repository is at <a href="https://github.com/webmcu-ai">https://gi
 <summary><b>Hidden presentation tools</b> (narrated autoscroll, translation, voices, PowerPoint export)</summary>
 <br>
 
-Number of Slides: <input type="text" id="myCountLinks" size="6" value="19" >. List of seconds per slide: <input type="text" id="myCountMax" size="30" value="60, 42, 56, 60, 68, 69, 5, 5, 35, 11, 8, 57, 69, 59, 54, 63" >   Can be a list of seconds example: 17, 20, 24, 20 The last number continues.
+Number of Slides: <input type="text" id="myCountLinks" size="6" value="19" >. List of seconds per slide: <input type="text" id="myCountMax" size="30" value="69,71,47,53,74,41,55,30,73,10,39,13,8,59,47,74,77,66,200" >   Can be a list of seconds example: 17, 20, 24, 20 The last number continues.
 <br><br>
 
 Choose the language: <div id="google_translate_element"></div>
@@ -63,9 +63,9 @@ Voice number: <input id="myVoiceNum" type=number  style="width: 5em" value=3>
 <i>Note: the recorded narration is from the July 2026 Geneva talk, so it does not yet match the updated slides below.</i><br><br>
 
 <input type=button value="Jeremy Ellis Reading in English" onclick="{
-   document.getElementById('myCountMax').value = '60, 42, 56, 60, 68, 69, 5, 5, 35, 11, 8, 57, 69, 59, 54, 63';
+   document.getElementById('myCountMax').value = '69,71,47,53,74,41,55,30,73,10,39,13,8,59,47,74,77,66,200';
    mySetup();
-   myAudio01 = new Audio('Maker100-presentation00.m4a');
+   myAudio01 = new Audio('./media/Maker100-presentation00.m4a');
    myAudio01.play();
    carousel();
 }">
