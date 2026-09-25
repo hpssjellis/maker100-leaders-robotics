@@ -1,0 +1,295 @@
+/*
+ * XIAO ESP32S3 Sense — Synchronized Video + Audio Recorder
+ *
+ * Video: MJPEG AVI on Core 1 (Arduino default)
+ * Audio: WAV via I2S PDM on Core 0 (FreeRTOS task)
+ *
+ * Files are paired by clip number: video0.avi + audio0.wav, etc.
+ *
+ * To mux later on your PC:
+ *   ffmpeg -i video0.avi -i audio0.wav -c:v copy -c:a aac output0.mp4
+ *
+ * Requirements:
+ *   Tools > PSRAM: OPI PSRAM enabled
+ *   Tools > USB CDC on Boot: Enabled
+ */
+
+#include "esp_camera.h"
+#include "ESP_I2S.h"
+#include "FS.h"
+#include "SD.h"
+#include "SPI.h"
+#include "esp_log.h"   // for esp_log_level_set
+
+// ── Pin definitions ──────────────────────────────────────────────────
+#define PWDN_GPIO_NUM     -1
+#define RESET_GPIO_NUM    -1
+#define XCLK_GPIO_NUM     10
+#define SIOD_GPIO_NUM     40
+#define SIOC_GPIO_NUM     39
+#define Y9_GPIO_NUM       48
+#define Y8_GPIO_NUM       11
+#define Y7_GPIO_NUM       12
+#define Y6_GPIO_NUM       14
+#define Y5_GPIO_NUM       16
+#define Y4_GPIO_NUM       18
+#define Y3_GPIO_NUM       17
+#define Y2_GPIO_NUM       15
+#define VSYNC_GPIO_NUM    38
+#define HREF_GPIO_NUM     47
+#define PCLK_GPIO_NUM     13
+
+const int SD_PIN_CS    = 21;
+const int FRAME_WIDTH  = 240;
+const int FRAME_HEIGHT = 240;
+const int FPS          = 10;
+
+// ── Timing ───────────────────────────────────────────────────────────
+const unsigned long RECORD_MS  = 5000;   // clip length
+const unsigned long PAUSE_MS   = 5000;   // gap between clips
+const int           AUDIO_SECS = (RECORD_MS / 1000) + 1;  // slightly long to cover clip
+
+// ── Globals shared between cores ─────────────────────────────────────
+volatile bool  recordingActive = false;   // set true to start, false to stop
+volatile int   clipIndex       = 0;
+volatile bool  audioTaskReady  = false;   // audio task signals it's initialised
+volatile bool  audioTaskDone   = false;   // audio task signals save complete
+
+I2SClass i2s;
+
+// ── AVI writer (same as before) ───────────────────────────────────────
+
+void writeU32LE(File &f, uint32_t v) {
+  f.write((uint8_t)(v));       f.write((uint8_t)(v >> 8));
+  f.write((uint8_t)(v >> 16)); f.write((uint8_t)(v >> 24));
+}
+void writeFourCC(File &f, const char *s) {
+  f.write((uint8_t)s[0]); f.write((uint8_t)s[1]);
+  f.write((uint8_t)s[2]); f.write((uint8_t)s[3]);
+}
+
+uint32_t pos_riffSize, pos_aviFrames, pos_strnFrames, pos_moviSize;
+
+void writeAviHeader(File &f, uint32_t fps, uint32_t w, uint32_t h) {
+  uint32_t usPerFrame = 1000000UL / fps;
+  writeFourCC(f, "RIFF"); pos_riffSize = f.position(); writeU32LE(f, 0);
+  writeFourCC(f, "AVI ");
+  writeFourCC(f, "LIST"); writeU32LE(f, 192); writeFourCC(f, "hdrl");
+  writeFourCC(f, "avih"); writeU32LE(f, 56);
+  writeU32LE(f, usPerFrame); writeU32LE(f, 0); writeU32LE(f, 0);
+  writeU32LE(f, 0x10);
+  pos_aviFrames = f.position(); writeU32LE(f, 0);
+  writeU32LE(f, 0); writeU32LE(f, 1); writeU32LE(f, 0);
+  writeU32LE(f, w); writeU32LE(f, h);
+  writeU32LE(f, 0); writeU32LE(f, 0); writeU32LE(f, 0); writeU32LE(f, 0);
+  writeFourCC(f, "LIST"); writeU32LE(f, 116); writeFourCC(f, "strl");
+  writeFourCC(f, "strh"); writeU32LE(f, 56);
+  writeFourCC(f, "vids"); writeFourCC(f, "MJPG");
+  writeU32LE(f, 0); writeU32LE(f, 0); writeU32LE(f, 0);
+  writeU32LE(f, 1); writeU32LE(f, fps); writeU32LE(f, 0);
+  pos_strnFrames = f.position(); writeU32LE(f, 0);
+  writeU32LE(f, 0); writeU32LE(f, 0xFFFFFFFF); writeU32LE(f, 0);
+  f.write((uint8_t)0); f.write((uint8_t)0); f.write((uint8_t)0); f.write((uint8_t)0);
+  f.write((uint8_t)(w & 0xFF)); f.write((uint8_t)(w >> 8));
+  f.write((uint8_t)(h & 0xFF)); f.write((uint8_t)(h >> 8));
+  writeFourCC(f, "strf"); writeU32LE(f, 40);
+  writeU32LE(f, 40); writeU32LE(f, w); writeU32LE(f, h);
+  f.write((uint8_t)1); f.write((uint8_t)0);
+  f.write((uint8_t)24); f.write((uint8_t)0);
+  writeFourCC(f, "MJPG"); writeU32LE(f, w * h * 3);
+  writeU32LE(f, 0); writeU32LE(f, 0); writeU32LE(f, 0); writeU32LE(f, 0);
+  writeFourCC(f, "LIST"); pos_moviSize = f.position(); writeU32LE(f, 0);
+  writeFourCC(f, "movi");
+}
+
+struct IdxEntry { uint32_t offset, size; };
+const int MAX_FRAMES = 600;
+IdxEntry   idx[MAX_FRAMES];
+int        frameCount    = 0;
+uint32_t   moviDataStart = 0;
+
+void writeFrame(File &f, uint8_t *buf, size_t len) {
+  if (frameCount >= MAX_FRAMES) return;
+  size_t paddedLen = (len + 1) & ~1u;
+  idx[frameCount].offset = (uint32_t)(f.position() - moviDataStart);
+  idx[frameCount].size   = (uint32_t)len;
+  frameCount++;
+  writeFourCC(f, "00dc"); writeU32LE(f, (uint32_t)len);
+  f.write(buf, len);
+  if (paddedLen > len) f.write((uint8_t)0);
+}
+
+void finalizeAvi(File &f) {
+  uint32_t moviEnd  = f.position();
+  uint32_t moviSize = (uint32_t)(moviEnd - moviDataStart) + 4;
+  writeFourCC(f, "idx1"); writeU32LE(f, (uint32_t)frameCount * 16);
+  for (int i = 0; i < frameCount; i++) {
+    writeFourCC(f, "00dc"); writeU32LE(f, 0x10);
+    writeU32LE(f, idx[i].offset); writeU32LE(f, idx[i].size);
+  }
+  uint32_t fileEnd = f.position();
+  f.seek(pos_riffSize);  writeU32LE(f, fileEnd - 8);
+  f.seek(pos_aviFrames); writeU32LE(f, (uint32_t)frameCount);
+  f.seek(pos_strnFrames);writeU32LE(f, (uint32_t)frameCount);
+  f.seek(pos_moviSize);  writeU32LE(f, moviSize);
+  f.close();
+}
+
+// ── Audio task — runs on Core 0 ──────────────────────────────────────
+
+void audioTask(void *param) {
+  // i2s already initialised in setup(); just signal ready
+  audioTaskReady = true;
+
+  while (true) {
+    // Wait for recording flag
+    while (!recordingActive) vTaskDelay(1);
+
+    int clip = clipIndex;
+    Serial.printf("[Audio] Recording clip %d\n", clip);
+
+    uint8_t *wav_buf;
+    size_t   wav_size;
+    wav_buf = i2s.recordWAV(AUDIO_SECS, &wav_size);  // blocks for AUDIO_SECS seconds
+
+    // Save only if we're still on the same clip (sanity check)
+    if (wav_buf && clip == clipIndex) {
+      char fname[32];
+      sprintf(fname, "/audio%d.wav", clip);
+      File f = SD.open(fname, FILE_WRITE);
+      if (f) {
+        f.write(wav_buf, wav_size);
+        f.close();
+        Serial.printf("[Audio] Saved %s (%u bytes)\n", fname, wav_size);
+      } else {
+        Serial.printf("[Audio] Could not open %s\n", fname);
+      }
+    }
+    free(wav_buf);   // recordWAV allocates with malloc; free it
+
+    audioTaskDone = true;
+
+    // Wait for main core to clear the flag before looping
+    while (recordingActive) vTaskDelay(1);
+    audioTaskDone = false;
+  }
+}
+
+// ── Setup ─────────────────────────────────────────────────────────────
+
+void setup() {
+  Serial.begin(115200);
+
+  // ── Silence the FB-OVF camera log spam ──
+  esp_log_level_set("cam_hal", ESP_LOG_ERROR);   // suppress WARN-level FB-OVF
+
+  // ── Camera ──
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer   = LEDC_TIMER_0;
+  config.pin_d0 = Y2_GPIO_NUM; config.pin_d1 = Y3_GPIO_NUM;
+  config.pin_d2 = Y4_GPIO_NUM; config.pin_d3 = Y5_GPIO_NUM;
+  config.pin_d4 = Y6_GPIO_NUM; config.pin_d5 = Y7_GPIO_NUM;
+  config.pin_d6 = Y8_GPIO_NUM; config.pin_d7 = Y9_GPIO_NUM;
+  config.pin_xclk     = XCLK_GPIO_NUM;
+  config.pin_pclk     = PCLK_GPIO_NUM;
+  config.pin_vsync    = VSYNC_GPIO_NUM;
+  config.pin_href     = HREF_GPIO_NUM;
+  config.pin_sscb_sda = SIOD_GPIO_NUM;
+  config.pin_sscb_scl = SIOC_GPIO_NUM;
+  config.pin_pwdn     = PWDN_GPIO_NUM;
+  config.pin_reset    = RESET_GPIO_NUM;
+  config.xclk_freq_hz = 20000000;
+  config.pixel_format = PIXFORMAT_JPEG;
+  config.frame_size   = FRAMESIZE_240X240;
+  config.grab_mode    = CAMERA_GRAB_LATEST;   // ← fixes FB-OVF at source
+  config.fb_location  = CAMERA_FB_IN_PSRAM;
+  config.jpeg_quality = 12;
+  config.fb_count     = 2;                    // ← 2 buffers needed for GRAB_LATEST
+
+  if (esp_camera_init(&config) != ESP_OK) {
+    Serial.println("Camera init failed!"); while (1);
+  }
+
+  // ── I2S microphone ──
+  i2s.setPinsPdmRx(42, 41);
+  if (!i2s.begin(I2S_MODE_PDM_RX, 16000, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO)) {
+    Serial.println("I2S init failed!"); while (1);
+  }
+
+  // ── SD card ──
+  if (!SD.begin(SD_PIN_CS) || SD.cardType() == CARD_NONE) {
+    Serial.println("SD init failed!"); while (1);
+  }
+
+  // ── Launch audio task on Core 0 (stack 8KB, priority 1) ──
+  xTaskCreatePinnedToCore(
+    audioTask,    // function
+    "audioTask",  // name
+    8192,         // stack bytes
+    NULL,         // param
+    1,            // priority
+    NULL,         // handle
+    0             // core 0
+  );
+
+  // Wait for audio task to be ready before loop() starts
+  while (!audioTaskReady) delay(10);
+
+  Serial.printf("Ready. %lums clips every %lums.\n", RECORD_MS, PAUSE_MS);
+}
+
+// ── Main loop — video on Core 1 ──────────────────────────────────────
+
+void loop() {
+  delay(PAUSE_MS);
+
+  // ── Signal both cores to start ──
+  audioTaskDone   = false;
+  recordingActive = true;
+
+  // ── Open AVI file ──
+  char aviName[32];
+  sprintf(aviName, "/video%d.avi", (int)clipIndex);
+  File videoFile = SD.open(aviName, FILE_WRITE);
+  if (!videoFile) { Serial.println("AVI open failed!"); recordingActive = false; return; }
+
+  frameCount = 0;
+  writeAviHeader(videoFile, FPS, FRAME_WIDTH, FRAME_HEIGHT);
+  moviDataStart = videoFile.position();
+
+  Serial.printf("[Video] Recording clip %d\n", (int)clipIndex);
+  unsigned long recStart = millis();
+
+while ((millis() - recStart) < RECORD_MS) {
+    camera_fb_t *fb = nullptr;
+
+    // Retry up to 5 times before skipping this frame
+    for (int retry = 0; retry < 5 && !fb; retry++) {
+      fb = esp_camera_fb_get();
+      if (!fb) delay(10);
+    }
+
+    if (!fb) {
+      Serial.println("[Video] Skipping frame (fb null after retries)");
+      continue;   // skip this frame but keep recording
+    }
+
+    writeFrame(videoFile, fb->buf, fb->len);
+    esp_camera_fb_return(fb);
+  }
+
+  finalizeAvi(videoFile);
+  Serial.printf("[Video] Saved %s (%d frames)\n", aviName, frameCount);
+
+  // ── Wait for audio task to finish saving ──
+  unsigned long audioWaitStart = millis();
+  while (!audioTaskDone && (millis() - audioWaitStart) < 10000) delay(50);
+  if (!audioTaskDone) Serial.println("[Audio] Timeout waiting for save!");
+
+  // ── Signal audio task that clip is done ──
+  recordingActive = false;
+  clipIndex++;
+
+  Serial.printf("Clip %d complete. Pausing %lums.\n", (int)clipIndex, PAUSE_MS);
+}
