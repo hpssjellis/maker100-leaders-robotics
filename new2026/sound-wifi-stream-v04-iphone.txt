@@ -1,0 +1,266 @@
+// By Brigham
+
+#include "WiFi.h"
+#include "ESP_I2S.h"
+
+// --- WiFi ---
+const char* mySsid = "ssidIDID";  // you enter yours
+const char* myPassword = "passpass";  // you enter yours
+
+// --- Server ---
+WiFiServer myServer(80);
+
+// --- I2S ---
+I2SClass myI2S;
+
+// --- Audio Configuration ---
+#define SAMPLE_RATE 16000
+#define CHUNK_SAMPLES 128   
+#define VOLUME_GAIN 4       // Boosts microphone sensitivity so iPhone can hear it
+
+// --- Recording Buffer ---
+#define MAX_RECORD_SAMPLES (SAMPLE_RATE * 15) 
+int16_t* myRecordBuffer = NULL;
+uint32_t myRecordedSamplesCount = 0;
+bool myIsRecordingRAM = false;
+
+// --- FUNCTION TO GENERATE WAV HEADER ---
+void myBuildWavHeader(uint8_t* header, uint32_t dataSize) {
+  uint32_t mySampleRate = SAMPLE_RATE;
+  uint16_t myBits = 16;
+  uint16_t myChannels = 1;
+
+  uint32_t myByteRate = mySampleRate * myChannels * myBits / 8;
+  uint16_t myBlockAlign = myChannels * myBits / 8;
+  uint32_t myFileSize = dataSize + 36;
+
+  memcpy(header, "RIFF", 4);
+  memcpy(header + 4, &myFileSize, 4);
+  memcpy(header + 8, "WAVE", 4);
+  memcpy(header + 12, "fmt ", 4);
+  
+  uint32_t myFmtSize = 16;
+  memcpy(header + 16, &myFmtSize, 4);
+
+  uint16_t myFormat = 1; // PCM
+  memcpy(header + 20, &myFormat, 2);
+  memcpy(header + 22, &myChannels, 2);
+  memcpy(header + 24, &mySampleRate, 4);
+  memcpy(header + 28, &myByteRate, 4);
+  memcpy(header + 32, &myBlockAlign, 2);
+  memcpy(header + 34, &myBits, 2);
+
+  memcpy(header + 36, "data", 4);
+  memcpy(header + 40, &dataSize, 4);
+}
+
+// --- SEND HTML PAGE ---
+void mySendPage(WiFiClient &myClient) {
+  myClient.println("HTTP/1.1 200 OK");
+  myClient.println("Content-Type: text/html");
+  myClient.println("Connection: close");
+  myClient.println();
+
+  myClient.println("<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1'></head>");
+  myClient.println("<body style='text-align:center;font-family:sans-serif;padding:20px; background-color:#f4f4f9;'>");
+  myClient.println("<h2>XIAO ESP32S3 Live Audio</h2>");
+
+  myClient.println("<audio id='myAudio' controls src='/stream' preload='none'></audio><br><br>");
+  
+  myClient.println("<button style='padding:12px 24px; font-size:16px; margin:5px;' onclick='document.getElementById(\"myAudio\").play()'>&#9654; Start Stream</button><br><br>");
+  myClient.println("<button style='padding:12px; font-size:14px; background-color:#ff4d4d; color:white; border:none; border-radius:4px; margin:5px;' onclick='startRec()'>Start Recording</button>");
+  myClient.println("<button style='padding:12px; font-size:14px; background-color:#4caf50; color:white; border:none; border-radius:4px; margin:5px;' onclick='stopRec()'>Stop & Download</button>");
+  
+  myClient.println("<p id='myStatus' style='font-weight:bold; margin-top:20px;'>Status: Idle</p>");
+
+  myClient.println("<script>");
+  myClient.println("function startRec() {");
+  myClient.println("  fetch('/start-rec');");
+  myClient.println("  document.getElementById('myStatus').innerHTML = 'Status: 🔴 Recording on ESP32 RAM...';");
+  myClient.println("}");
+  
+  myClient.println("function stopRec() {");
+  myClient.println("  document.getElementById('myStatus').innerHTML = 'Status: ⏳ Preparing file download...';");
+  myClient.println("  window.location.href = '/download-rec';");
+  myClient.println("  setTimeout(() => { document.getElementById('myStatus').innerHTML = 'Status: Idle'; }, 3000);");
+  myClient.println("}");
+  myClient.println("</script>");
+
+  myClient.println("</body></html>");
+}
+
+// --- STREAM AUDIO (PATCHED FOR SAFARI / IOS) ---
+void myStreamAudio(WiFiClient &myClient) {
+  bool myRangeProbe = false;
+
+  int timeout = 0;
+  while (!myClient.available() && timeout < 20) {
+    delay(10);
+    timeout++;
+  }
+
+  while (myClient.available()) {
+    String myLine = myClient.readStringUntil('\n');
+    myLine.trim();
+    if (myLine.indexOf("Range:") >= 0) {
+      myRangeProbe = true;
+    }
+    if (myLine.length() == 0) break; 
+  }
+
+  if (myRangeProbe) {
+    myClient.println("HTTP/1.1 206 Partial Content");
+    myClient.println("Content-Type: audio/wav");
+    myClient.println("Accept-Ranges: bytes");
+    myClient.println("Content-Range: bytes 0-1/2147483647");
+    myClient.println("Content-Length: 2");
+    myClient.println("Connection: close");
+    myClient.println();
+    uint8_t myProbe[2] = {0, 0};
+    myClient.write(myProbe, 2);
+    myClient.stop();
+    return;
+  }
+
+  // Live Continuous Stream Headers optimized for iOS Safari
+  myClient.println("HTTP/1.1 200 OK");
+  myClient.println("Content-Type: audio/x-wav"); // x-wav handles fallback playback paths on mobile safer
+  myClient.println("Accept-Ranges: none");       // Telling safari not to try segmenting live data
+  myClient.println("Cache-Control: no-cache, no-store, must-revalidate");
+  myClient.println("Pragma: no-cache");
+  myClient.println("Expires: 0");
+  myClient.println("Connection: close");
+  myClient.println();
+
+  uint8_t temporaryHeader[44];
+  myBuildWavHeader(temporaryHeader, 0x7FFFFFFF); 
+  myClient.write(temporaryHeader, 44);
+
+  int16_t myBuffer[CHUNK_SAMPLES];
+
+  while (myClient.connected()) {
+    for (int i = 0; i < CHUNK_SAMPLES; i++) {
+      int mySample = myI2S.read();
+      if (mySample == -1 || mySample == 0 || mySample == 1) mySample = 0;
+      
+      // Gain optimization logic so audio is actually clearly audible
+      int32_t amplified = (int32_t)mySample << VOLUME_GAIN;
+      if (amplified > 32767) amplified = 32767;
+      if (amplified < -32768) amplified = -32768;
+      
+      myBuffer[i] = (int16_t)amplified;
+      
+      if (myIsRecordingRAM && myRecordedSamplesCount < MAX_RECORD_SAMPLES) {
+        myRecordBuffer[myRecordedSamplesCount++] = myBuffer[i];
+      }
+    }
+
+    size_t mySent = myClient.write((uint8_t*)myBuffer, CHUNK_SAMPLES * 2);
+    if (mySent == 0) break;
+    yield();  
+  }
+  myClient.stop();
+}
+
+// --- SERVE RECORDED WAV FILE FROM RAM ---
+void myHandleDownload(WiFiClient &myClient) {
+  myIsRecordingRAM = false; 
+
+  uint32_t dataBytesSize = myRecordedSamplesCount * 2;
+
+  myClient.println("HTTP/1.1 200 OK");
+  myClient.print("Content-Length: ");
+  myClient.println(dataBytesSize + 44);
+  myClient.println("Content-Type: audio/wav");
+  myClient.println("Content-Disposition: attachment; filename=\"esp32_audio.wav\"");
+  myClient.println("Connection: close");
+  myClient.println();
+
+  uint8_t wavHeader[44];
+  myBuildWavHeader(wavHeader, dataBytesSize);
+  myClient.write(wavHeader, 44);
+
+  if (myRecordedSamplesCount > 0 && myRecordBuffer != NULL) {
+    myClient.write((uint8_t*)myRecordBuffer, dataBytesSize);
+  }
+
+  myRecordedSamplesCount = 0;
+}
+
+// --- SETUP ---
+void setup() {
+  Serial.begin(115200);
+
+  myRecordBuffer = (int16_t*) malloc(MAX_RECORD_SAMPLES * sizeof(int16_t));
+  if(myRecordBuffer == NULL) {
+    Serial.println("Memory allocation failed!");
+  }
+
+  myI2S.setPinsPdmRx(42, 41);
+  if (!myI2S.begin(I2S_MODE_PDM_RX, SAMPLE_RATE, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO)) {
+    Serial.println("I2S failed!");
+    while (1);
+  }
+
+  WiFi.begin(mySsid, myPassword);
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nConnected!");
+  Serial.print("Open: http://");
+  Serial.println(WiFi.localIP());
+
+  myServer.begin();
+}
+
+// --- LOOP ---
+void loop() {
+  WiFiClient myClient = myServer.available();
+
+  if (myClient) {
+    String myRequest = myClient.readStringUntil('\r');
+    myClient.readStringUntil('\n');  
+
+    if (myRequest.indexOf("GET /stream") >= 0) {
+      myStreamAudio(myClient);
+    } 
+    else if (myRequest.indexOf("GET /start-rec") >= 0) {
+      myRecordedSamplesCount = 0;
+      myIsRecordingRAM = true;
+      myClient.println("HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+      myClient.stop();
+    } 
+    else if (myRequest.indexOf("GET /download-rec") >= 0) {
+      myHandleDownload(myClient);
+      myClient.stop();
+    } 
+    else if (myRequest.indexOf("GET / ") >= 0 || myRequest.indexOf("GET /index") >= 0) {
+      while (myClient.available()) {
+        String line = myClient.readStringUntil('\n');
+        if (line == "\r" || line.length() == 0) {
+          break; 
+        }
+      }
+      mySendPage(myClient);
+      myClient.stop();
+    } 
+    else {
+      myClient.stop();
+    }
+  }
+
+  // Background audio recording parser
+  if (myIsRecordingRAM && myRecordedSamplesCount < MAX_RECORD_SAMPLES) {
+    int mySample = myI2S.read();
+    if (mySample == -1 || mySample == 0 || mySample == 1) mySample = 0;
+    
+    int32_t amplified = (int32_t)mySample << VOLUME_GAIN;
+    if (amplified > 32767) amplified = 32767;
+    if (amplified < -32768) amplified = -32768;
+
+    myRecordBuffer[myRecordedSamplesCount++] = (int16_t)amplified;
+  }
+}
