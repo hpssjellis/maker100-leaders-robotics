@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Maker100 WebSerial Game serial-v001</title>
+</head>
+
+<body id="myBody" style="margin:20px;">
+
+<h1>Maker100 WebSerial Game — serial-v001</h1>
+
+<p>
+Press the physical ESP32 button. The blue object will move left until it
+hits the red object. The webpage then tells the ESP32 to turn on its LED.
+</p>
+
+<input type="button" value="Connect ESP32" onclick="myConnectSerial()">
+<input type="button" value="Disconnect" onclick="myDisconnectSerial()">
+<input type="button" value="Reset Game" onclick="myResetGame()">
+
+<p id="myStatus">Not connected</p>
+<p id="myMessage">Press the ESP32 button to start.</p>
+
+<div id="myGame" style="position:relative; width:700px; height:220px; border:2px solid black; overflow:hidden; background:#eee;">
+
+  <div id="myImg01"
+       style="position:absolute; width:80px; height:80px; left:500px; top:70px; background:blue;">
+  </div>
+
+  <div id="myImg02"
+       style="position:absolute; width:80px; height:80px; left:150px; top:70px; background:red;">
+  </div>
+
+</div>
+
+<p>
+Blue object = webpage robot<br>
+Red object = target
+</p>
+
+<pre id="myHistory" style="width:680px; height:150px; overflow:auto; border:1px solid #999; padding:10px;">Serial history:
+</pre>
+
+<script>
+
+let myPort = null
+let myReader = null
+let myWriter = null
+let mySerialRunning = false
+let myMoveClock = null
+let mySerialBuffer = ''
+
+async function myConnectSerial() {
+
+  if (!('serial' in navigator)) {
+    document.getElementById('myStatus').innerHTML =
+      'WebSerial is not supported. Use Chrome or Edge.'
+    return
+  }
+
+  try {
+
+    myPort = await navigator.serial.requestPort()
+
+    await myPort.open({ baudRate: 115200 })
+
+    myWriter = myPort.writable.getWriter()
+
+    mySerialRunning = true
+
+    document.getElementById('myStatus').innerHTML = 'ESP32 connected'
+
+    myWriteHistory('CONNECTED')
+
+    myReadSerial()
+
+  } catch (myError) {
+
+    document.getElementById('myStatus').innerHTML =
+      'Connection cancelled or failed.'
+
+    myWriteHistory('ERROR: ' + myError)
+
+  }
+}
+
+async function myReadSerial() {
+
+  if (!myPort || !myPort.readable) {
+    return
+  }
+
+  myReader = myPort.readable.getReader()
+
+  try {
+
+    while (mySerialRunning) {
+
+      const { value: myValue, done: myDone } = await myReader.read()
+
+      if (myDone) {
+        break
+      }
+
+      if (myValue) {
+
+        const myText = new TextDecoder().decode(myValue)
+
+        mySerialBuffer += myText
+
+        let myLines = mySerialBuffer.split('\n')
+
+        mySerialBuffer = myLines.pop()
+
+        for (let myLine of myLines) {
+
+          myLine = myLine.trim()
+
+          if (myLine.length > 0) {
+            myHandleSerial(myLine)
+          }
+
+        }
+      }
+    }
+
+  } catch (myError) {
+
+    myWriteHistory('READ ERROR: ' + myError)
+
+  } finally {
+
+    try {
+      myReader.releaseLock()
+    } catch (myError) {}
+
+    myReader = null
+  }
+}
+
+function myHandleSerial(myMessage) {
+
+  myWriteHistory('ESP32 → ' + myMessage)
+
+  if (myMessage == 'LEFT') {
+    myStartMovingLeft()
+  }
+
+  if (myMessage == 'SERIAL_V001_READY') {
+    document.getElementById('myStatus').innerHTML =
+      'ESP32 connected and ready'
+  }
+
+  if (myMessage == 'LED_ON') {
+    document.getElementById('myMessage').innerHTML =
+      'TARGET HIT — ESP32 LED is ON!'
+  }
+
+  if (myMessage == 'LED_OFF') {
+    document.getElementById('myMessage').innerHTML =
+      'Game reset — press the ESP32 button.'
+  }
+}
+
+async function mySendSerial(myMessage) {
+
+  if (!myWriter) {
+    myWriteHistory('NOT CONNECTED: ' + myMessage)
+    return
+  }
+
+  try {
+
+    await myWriter.write(
+      new TextEncoder().encode(myMessage + '\n')
+    )
+
+    myWriteHistory('WEB → ESP32: ' + myMessage)
+
+  } catch (myError) {
+
+    myWriteHistory('WRITE ERROR: ' + myError)
+
+  }
+}
+
+function myStartMovingLeft() {
+
+  clearInterval(myMoveClock)
+
+  document.getElementById('myMessage').innerHTML =
+    'Button received — moving left...'
+
+  myMoveClock = setInterval(function() {
+
+    let myObject = document.getElementById('myImg01')
+
+    let myLeft = parseInt(myObject.style.left)
+
+    myLeft -= 5
+
+    myObject.style.left = myLeft + 'px'
+
+    if (myHitOther('myImg01', 'myImg02')) {
+
+      clearInterval(myMoveClock)
+
+      document.getElementById('myMessage').innerHTML =
+        'TARGET HIT — telling ESP32 to turn on its LED.'
+
+      mySendSerial('HIT')
+    }
+
+    if (myLeft <= 0) {
+
+      clearInterval(myMoveClock)
+
+      document.getElementById('myMessage').innerHTML =
+        'The object reached the left edge.'
+
+    }
+
+  }, 50)
+}
+
+function myHitOther(myOne, myTwo) {
+
+  let myObject1 = document.getElementById(myOne)
+  let myObject2 = document.getElementById(myTwo)
+
+  let myLeft1 = parseInt(myObject1.style.left)
+  let myRight1 = myLeft1 + parseInt(myObject1.style.width)
+  let myTop1 = parseInt(myObject1.style.top)
+  let myBottom1 = myTop1 + parseInt(myObject1.style.height)
+
+  let myLeft2 = parseInt(myObject2.style.left)
+  let myRight2 = myLeft2 + parseInt(myObject2.style.width)
+  let myTop2 = parseInt(myObject2.style.top)
+  let myBottom2 = myTop2 + parseInt(myObject2.style.height)
+
+  if ((myRight1 >= myLeft2) &&
+      (myBottom1 >= myTop2) &&
+      (myLeft1 <= myRight2) &&
+      (myTop1 <= myBottom2)) {
+
+    return true
+  }
+
+  return false
+}
+
+async function myResetGame() {
+
+  clearInterval(myMoveClock)
+
+  document.getElementById('myImg01').style.left = '500px'
+
+  document.getElementById('myMessage').innerHTML =
+    'Game reset — press the ESP32 button.'
+
+  await mySendSerial('RESET')
+}
+
+async function myDisconnectSerial() {
+
+  clearInterval(myMoveClock)
+
+  mySerialRunning = false
+
+  try {
+
+    if (myReader) {
+      await myReader.cancel()
+    }
+
+  } catch (myError) {}
+
+  try {
+
+    if (myWriter) {
+      myWriter.releaseLock()
+    }
+
+  } catch (myError) {}
+
+  try {
+
+    if (myPort) {
+      await myPort.close()
+    }
+
+  } catch (myError) {}
+
+  myReader = null
+  myWriter = null
+  myPort = null
+
+  document.getElementById('myStatus').innerHTML =
+    'Disconnected'
+
+  myWriteHistory('DISCONNECTED')
+}
+
+function myWriteHistory(myText) {
+
+  let myHistory = document.getElementById('myHistory')
+
+  myHistory.textContent += '\n' + myText
+
+  myHistory.scrollTop = myHistory.scrollHeight
+}
+
+</script>
+
+</body>
+</html>

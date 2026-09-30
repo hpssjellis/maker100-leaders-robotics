@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Maker100 WebBLE Game ble-v002</title>
+</head>
+
+<body id="myBody" style="margin:20px;">
+
+<h1>Maker100 WebBLE Game — ble-v002</h1>
+
+<p>
+Press the physical ESP32 button. The blue object will move left until it
+hits the red object. The webpage then tells the ESP32 to turn on its LED.
+</p>
+
+<input type="button" value="Connect ESP32 with WebBLE" onclick="myConnectBLE()">
+<input type="button" value="Disconnect" onclick="myDisconnectBLE()">
+<input type="button" value="Reset Game" onclick="myResetGame()">
+
+<p id="myStatus">Not connected</p>
+<p id="myMessage">Press the ESP32 button to start.</p>
+
+<div id="myGame" style="position:relative; width:700px; height:220px; border:2px solid black; overflow:hidden; background:#eee;">
+
+  <div id="myImg01"
+       style="position:absolute; width:80px; height:80px; left:500px; top:70px; background:blue;">
+  </div>
+
+  <div id="myImg02"
+       style="position:absolute; width:80px; height:80px; left:150px; top:70px; background:red;">
+  </div>
+
+</div>
+
+<p>
+Blue object = webpage robot<br>
+Red object = target
+</p>
+
+<pre id="myHistory" style="width:680px; height:150px; overflow:auto; border:1px solid #999; padding:10px;">BLE history:
+</pre>
+
+<script>
+
+const MY_BLE_SERVICE_UUID =
+  '7e400001-b2c3-5d4e-af60-9b3c7d8eaf20'
+
+const MY_BLE_CONTROL_CHAR_UUID =
+  '7e400002-b2c3-5d4e-af60-9b3c7d8eaf20'
+
+const MY_BLE_RESULT_CHAR_UUID =
+  '7e400006-b2c3-5d4e-af60-9b3c7d8eaf20'
+
+let myDevice = null
+let myServer = null
+let myService = null
+let myControlChar = null
+let myResultChar = null
+let myMoveClock = null
+
+async function myConnectBLE() {
+
+  if (!navigator.bluetooth) {
+
+    document.getElementById('myStatus').innerHTML =
+      'WebBLE is not supported. Use Chrome or Edge.'
+
+    return
+  }
+
+  try {
+
+    myDevice = await navigator.bluetooth.requestDevice({
+
+      filters: [
+        { namePrefix: 'ESP32-Fusion-01' }
+      ],
+
+      optionalServices: [
+        MY_BLE_SERVICE_UUID
+      ]
+
+    })
+
+    myDevice.addEventListener(
+      'gattserverdisconnected',
+      myBLEDisconnected
+    )
+
+    myServer = await myDevice.gatt.connect()
+
+    myService =
+      await myServer.getPrimaryService(
+        MY_BLE_SERVICE_UUID
+      )
+
+    myControlChar =
+      await myService.getCharacteristic(
+        MY_BLE_CONTROL_CHAR_UUID
+      )
+
+    myResultChar =
+      await myService.getCharacteristic(
+        MY_BLE_RESULT_CHAR_UUID
+      )
+
+    myResultChar.addEventListener(
+      'characteristicvaluechanged',
+      myHandleBLEMessage
+    )
+
+    await myResultChar.startNotifications()
+
+    document.getElementById('myStatus').innerHTML =
+      'Connected: ' + myDevice.name
+
+    myWriteHistory(
+      'CONNECTED to ' + myDevice.name
+    )
+
+    // Read the READY message the ESP32 stored (it was set before we subscribed)
+    try {
+      let myFirst = await myResultChar.readValue()
+      myHandleBLEMessage({ target: { value: myFirst } })
+    } catch (myReadError) {
+      myWriteHistory('READ note: ' + myReadError)
+    }
+
+  } catch (myError) {
+
+    document.getElementById('myStatus').innerHTML =
+      'Connection cancelled or failed.'
+
+    myWriteHistory(
+      'ERROR: ' + myError
+    )
+  }
+}
+
+function myHandleBLEMessage(myEvent) {
+
+  let myDecoder = new TextDecoder()
+
+  let myMessage =
+    myDecoder.decode(myEvent.target.value).trim()
+
+  myWriteHistory(
+    'ESP32 → WEB: ' + myMessage
+  )
+
+  if (myMessage == 'LEFT') {
+    myStartMovingLeft()
+  }
+
+  if (myMessage == 'BLE_V002_READY') {
+
+    document.getElementById('myMessage').innerHTML =
+      'ESP32 connected — press the physical button.'
+  }
+
+  if (myMessage == 'LED_ON') {
+
+    document.getElementById('myMessage').innerHTML =
+      'TARGET HIT — ESP32 LED is ON!'
+  }
+
+  if (myMessage == 'LED_OFF') {
+
+    document.getElementById('myMessage').innerHTML =
+      'Game reset — press the ESP32 button.'
+  }
+}
+
+async function mySendBLE(myMessage) {
+
+  if (!myControlChar) {
+
+    myWriteHistory(
+      'NOT CONNECTED: ' + myMessage
+    )
+
+    return
+  }
+
+  try {
+
+    let myEncoder = new TextEncoder()
+
+    await myControlChar.writeValue(
+      myEncoder.encode(myMessage)
+    )
+
+    myWriteHistory(
+      'WEB → ESP32: ' + myMessage
+    )
+
+  } catch (myError) {
+
+    myWriteHistory(
+      'WRITE ERROR: ' + myError
+    )
+  }
+}
+
+function myStartMovingLeft() {
+
+  clearInterval(myMoveClock)
+
+  document.getElementById('myMessage').innerHTML =
+    'Button received — moving left...'
+
+  myMoveClock = setInterval(function() {
+
+    let myObject =
+      document.getElementById('myImg01')
+
+    let myLeft =
+      parseInt(myObject.style.left)
+
+    myLeft -= 5
+
+    myObject.style.left =
+      myLeft + 'px'
+
+    if (myHitOther('myImg01', 'myImg02')) {
+
+      clearInterval(myMoveClock)
+
+      document.getElementById('myMessage').innerHTML =
+        'TARGET HIT — telling ESP32 to turn on its LED.'
+
+      mySendBLE('HIT')
+    }
+
+    if (myLeft <= 0) {
+
+      clearInterval(myMoveClock)
+
+      document.getElementById('myMessage').innerHTML =
+        'The object reached the left edge.'
+    }
+
+  }, 50)
+}
+
+function myHitOther(myOne, myTwo) {
+
+  let myObject1 =
+    document.getElementById(myOne)
+
+  let myObject2 =
+    document.getElementById(myTwo)
+
+  let myLeft1 =
+    parseInt(myObject1.style.left)
+
+  let myRight1 =
+    myLeft1 +
+    parseInt(myObject1.style.width)
+
+  let myTop1 =
+    parseInt(myObject1.style.top)
+
+  let myBottom1 =
+    myTop1 +
+    parseInt(myObject1.style.height)
+
+  let myLeft2 =
+    parseInt(myObject2.style.left)
+
+  let myRight2 =
+    myLeft2 +
+    parseInt(myObject2.style.width)
+
+  let myTop2 =
+    parseInt(myObject2.style.top)
+
+  let myBottom2 =
+    myTop2 +
+    parseInt(myObject2.style.height)
+
+  if (
+    (myRight1 >= myLeft2) &&
+    (myBottom1 >= myTop2) &&
+    (myLeft1 <= myRight2) &&
+    (myTop1 <= myBottom2)
+  ) {
+
+    return true
+  }
+
+  return false
+}
+
+async function myResetGame() {
+
+  clearInterval(myMoveClock)
+
+  document.getElementById('myImg01').style.left =
+    '500px'
+
+  document.getElementById('myMessage').innerHTML =
+    'Game reset — press the ESP32 button.'
+
+  await mySendBLE('RESET')
+}
+
+function myBLEDisconnected() {
+
+  clearInterval(myMoveClock)
+
+  document.getElementById('myStatus').innerHTML =
+    'Disconnected'
+
+  myWriteHistory('BLE DISCONNECTED')
+
+  myDevice = null
+  myServer = null
+  myService = null
+  myControlChar = null
+  myResultChar = null
+}
+
+function myDisconnectBLE() {
+
+  clearInterval(myMoveClock)
+
+  if (
+    myDevice &&
+    myDevice.gatt &&
+    myDevice.gatt.connected
+  ) {
+
+    myDevice.gatt.disconnect()
+
+  } else {
+
+    myBLEDisconnected()
+  }
+}
+
+function myWriteHistory(myText) {
+
+  let myHistory =
+    document.getElementById('myHistory')
+
+  myHistory.textContent +=
+    '\n' + myText
+
+  myHistory.scrollTop =
+    myHistory.scrollHeight
+}
+
+</script>
+
+</body>
+</html>
