@@ -396,7 +396,7 @@ Very hard to compare a class set of 15 × $38.90 USD = $583.50 USD with a class 
 ---
 
 ## Appendix E: Useful Links
-
+0. By Marcelo Rovai Videos on the XIAO ML kt  [https://www.youtube.com/playlist?list=PLZfRmYJnsFmo](https://www.youtube.com/playlist?list=PLZfRmYJnsFmo)
 1. Simplified course layout and organisation: [course-order.md](course-order.md)
 2. The original Maker100 Course: [https://github.com/hpssjellis/maker100](https://github.com/hpssjellis/maker100)
 3. Excellent reference for the XIAO ESP32S3 section of this course: [XIAO_Big_Power_Small_Board-ebook](https://mjrovai.github.io/XIAO_Big_Power_Small_Board-ebook/)
