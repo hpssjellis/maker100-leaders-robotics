@@ -1,0 +1,234 @@
+#include "WiFi.h"
+#include "ESP_I2S.h"
+
+// --- WiFi ---
+const char* mySsid = "ssid2222";
+const char* myPassword = "pass2222";
+
+// --- Server ---
+WiFiServer myServer(80);
+
+// --- I2S ---
+I2SClass myI2S;
+
+// --- Audio ---
+#define SAMPLE_RATE 16000
+#define CHUNK_SAMPLES 64   // small = low latency, more stable
+
+
+// --- WAV HEADER ---
+void mySendWavHeader(WiFiClient &myClient) {
+
+  uint8_t myHeader[44];
+
+  uint32_t mySampleRate = SAMPLE_RATE;
+  uint16_t myBits = 16;
+  uint16_t myChannels = 1;
+
+  uint32_t myByteRate = mySampleRate * myChannels * myBits / 8;
+  uint16_t myBlockAlign = myChannels * myBits / 8;
+
+  uint32_t myDataSize = 0xFFFFFFFF;
+  uint32_t myFileSize = myDataSize + 36;
+
+  memcpy(myHeader, "RIFF", 4);
+  memcpy(myHeader + 4, &myFileSize, 4);
+  memcpy(myHeader + 8, "WAVE", 4);
+
+  memcpy(myHeader + 12, "fmt ", 4);
+  uint32_t myFmtSize = 16;
+  memcpy(myHeader + 16, &myFmtSize, 4);
+
+  uint16_t myFormat = 1;
+  memcpy(myHeader + 20, &myFormat, 2);
+  memcpy(myHeader + 22, &myChannels, 2);
+  memcpy(myHeader + 24, &mySampleRate, 4);
+  memcpy(myHeader + 28, &myByteRate, 4);
+  memcpy(myHeader + 32, &myBlockAlign, 2);
+  memcpy(myHeader + 34, &myBits, 2);
+
+  memcpy(myHeader + 36, "data", 4);
+  memcpy(myHeader + 40, &myDataSize, 4);
+
+  myClient.write(myHeader, 44);
+}
+
+
+// --- SEND HTML PAGE ---
+
+void mySendPage(WiFiClient &myClient) {
+
+  myClient.println("HTTP/1.1 200 OK");
+  myClient.println("Content-Type: text/html");
+  myClient.println("Connection: close");
+  myClient.println();
+
+  myClient.println("<!DOCTYPE html><html><body style='text-align:center;font-family:sans-serif;'>");
+
+  myClient.println("<h2>XIAO ESP32S3 Live Audio</h2>");
+
+  myClient.println("<audio id='myAudio' controls autoplay src='/stream'></audio>");
+
+  myClient.println("<br><br>");
+
+  myClient.println("<input type='button' value='Start Recording' onclick='myStartRecording()'>");
+  myClient.println("<input type='button' value='Stop & Save Recording' onclick='myStopRecording()'>");
+
+  myClient.println("<p id='myStatus'>Status: idle</p>");
+
+  myClient.println("<script>");
+
+  myClient.println("let myMediaRecorder;");
+  myClient.println("let myChunks = [];");
+  myClient.println("let myIsRecording = false;");
+
+  myClient.println("async function myStartRecording() {");
+  myClient.println("  if (myIsRecording) return;");
+  myClient.println("  let myAudio = document.getElementById('myAudio');");
+  myClient.println("  let myStream = myAudio.captureStream();");
+  myClient.println("  myChunks = [];");
+  myClient.println("  myMediaRecorder = new MediaRecorder(myStream);");
+
+  myClient.println("  myMediaRecorder.ondataavailable = function(e) {");
+  myClient.println("    if (e.data.size > 0) { myChunks.push(e.data); }");
+  myClient.println("  };");
+
+  myClient.println("  myMediaRecorder.onstop = function() {");
+  myClient.println("    let myBlob = new Blob(myChunks, { type: 'audio/webm' });");
+  myClient.println("    let myUrl = URL.createObjectURL(myBlob);");
+  myClient.println("    let myA = document.createElement('a');");
+  myClient.println("    myA.href = myUrl;");
+  myClient.println("    myA.download = 'myRecording.webm';");  // drag to webpage or force open with media player
+  myClient.println("    myA.click();");
+  myClient.println("    document.getElementById('myStatus').innerHTML = 'Status: saved ✔';");
+  myClient.println("  };");
+
+  myClient.println("  myMediaRecorder.start();");
+  myClient.println("  myIsRecording = true;");
+  myClient.println("  document.getElementById('myStatus').innerHTML = 'Status: recording...';");
+  myClient.println("}");
+
+  myClient.println("function myStopRecording() {");
+  myClient.println("  if (!myIsRecording) return;");
+  myClient.println("  myMediaRecorder.stop();");
+  myClient.println("  myIsRecording = false;");
+  myClient.println("}");
+
+  myClient.println("</script>");
+
+  myClient.println("</body></html>");
+}
+/*
+void mySendPage(WiFiClient &myClient) {
+
+  myClient.println("HTTP/1.1 200 OK");
+  myClient.println("Content-Type: text/html");
+  myClient.println("Connection: close");
+  myClient.println();
+
+  myClient.println("<!DOCTYPE html><html><body style='text-align:center;font-family:sans-serif;'>");
+  myClient.println("<h2>XIAO ESP32S3 Live Audio</h2>");
+  myClient.println("<audio controls autoplay src='/stream'></audio>");
+  myClient.println("</body></html>");
+}
+
+
+*/
+
+// --- STREAM AUDIO ---
+void myStreamAudio(WiFiClient &myClient) {
+
+  // HTTP headers (NO chunked encoding!)
+  myClient.println("HTTP/1.1 200 OK");
+  myClient.println("Content-Type: audio/wav");
+  myClient.println("Connection: close");
+  myClient.println();
+
+  mySendWavHeader(myClient);
+
+  int16_t myBuffer[CHUNK_SAMPLES];
+
+  Serial.println("Streaming started");
+
+  while (myClient.connected()) {
+
+    // fill buffer sample-by-sample (Seeed method)
+    for (int i = 0; i < CHUNK_SAMPLES; i++) {
+
+      int mySample = myI2S.read();
+
+      if (mySample == -1 || mySample == 0 || mySample == 1) {
+        mySample = 0;
+      }
+
+      myBuffer[i] = mySample;
+    }
+
+    size_t mySent = myClient.write((uint8_t*)myBuffer, CHUNK_SAMPLES * 2);
+
+    if (mySent == 0) {
+      Serial.println("Client disconnected");
+      break;
+    }
+
+    yield(); // keep WiFi alive
+  }
+
+  myClient.stop();
+  Serial.println("Streaming stopped");
+}
+
+
+// --- SETUP ---
+void setup() {
+
+  Serial.begin(115200);
+
+  // --- I2S ---
+  myI2S.setPinsPdmRx(42, 41);
+
+  if (!myI2S.begin(I2S_MODE_PDM_RX, SAMPLE_RATE, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO)) {
+    Serial.println("I2S failed!");
+    while (1);
+  }
+
+  // --- WiFi ---
+  WiFi.begin(mySsid, myPassword);
+
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nConnected!");
+  Serial.print("Open: http://");
+  Serial.println(WiFi.localIP());
+
+  myServer.begin();
+}
+
+
+// --- LOOP ---
+void loop() {
+
+  WiFiClient myClient = myServer.available();
+
+  if (myClient) {
+
+    Serial.println("Client connected");
+
+    String myRequest = myClient.readStringUntil('\r');
+    myClient.readStringUntil('\n'); // clear line
+
+    Serial.println(myRequest);
+
+    if (myRequest.indexOf("GET /stream") >= 0) {
+      myStreamAudio(myClient);
+    } else {
+      mySendPage(myClient);
+      delay(1);
+      myClient.stop();
+    }
+  }
+}
